@@ -1,40 +1,40 @@
 package MVRXML
 
 type Scene struct {
-	AuxData *AuxData `xml:"AuxData"`
+	AuxData *AuxData `xml:"AUXData"`
 	Layers  []*Layer `xml:"Layers>Layer"`
 }
 
 type AuxData struct {
-	SymDefs            []*SymDef
-	Positions          []*Position
-	MappingDefinitions []*MappingDefinition
-	Classes            []*Class
+	SymDefs            []*SymDef            `xml:"Symdef"`
+	Positions          []*Position          `xml:"Position"`
+	MappingDefinitions []*MappingDefinition `xml:"MappingDefinition"`
+	Classes            []*Class             `xml:"Class"`
 }
 
 type SymDef struct {
-	UUID       string
-	Name       string
-	Geometries Geometries
+	UUID       string     `xml:"uuid,attr"`
+	Name       string     `xml:"name,attr"`
+	Geometries Geometries `xml:"ChildList"`
 }
 
 type Position struct {
-	UUID string
-	Name string
+	UUID string `xml:"uuid,attr"`
+	Name string `xml:"name,attr"`
 }
 
 type MappingDefinition struct {
-	UUID           string
-	Name           string
-	SizeX          int
-	SizeY          int
-	Source         Source
-	ScaleHandeling *string // ScaleKeepRatio or ScaleIgnoreRatio or KeepSizeCenter
+	UUID           string  `xml:"uuid,attr"`
+	Name           string  `xml:"name,attr"`
+	SizeX          int     `xml:"SizeX"`
+	SizeY          int     `xml:"SizeY"`
+	Source         Source  `xml:"Source"`
+	ScaleHandeling *string `xml:"ScaleHandeling"` // ScaleKeepRatio or ScaleIgnoreRatio or KeepSizeCenter
 }
 
 type Class struct {
-	UUID string
-	Name string
+	UUID string `xml:"uuid,attr"`
+	Name string `xml:"name,attr"`
 }
 
 type Layer struct {
