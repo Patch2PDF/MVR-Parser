@@ -6,6 +6,6 @@ type FocusPoint struct {
 	UUID       string
 	Name       string
 	Matrix     MeshTypes.Matrix
-	Class      *string
+	Class      NodeReference[Class] // TODO: Node reference
 	Geometries *Geometries
 }

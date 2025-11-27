@@ -35,7 +35,7 @@ type Symbol struct {
 func (a *Symbol) Parse() *MVRTypes.Symbol {
 	return &MVRTypes.Symbol{
 		UUID:   a.UUID,
-		SymDef: a.SymDef,
+		SymDef: MVRTypes.NodeReference[MVRTypes.SymDef]{String: &a.SymDef},
 		Matrix: a.Matrix.ToMeshMatrix(),
 	}
 }

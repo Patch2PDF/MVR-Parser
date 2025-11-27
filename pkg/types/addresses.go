@@ -7,7 +7,7 @@ type Addresses struct {
 
 type Address struct {
 	Break int
-	Value DMXAddress // needs to be converted into numeric, with seperate universe field at another time
+	Value DMXAddress
 }
 
 type Network struct {

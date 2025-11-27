@@ -15,7 +15,7 @@ func (a *FocusPoint) Parse() *MVRTypes.FocusPoint {
 		UUID:       a.UUID,
 		Name:       a.Name,
 		Matrix:     a.Matrix.ToMeshMatrix(),
-		Class:      a.Class,
+		Class:      MVRTypes.NodeReference[MVRTypes.Class]{String: a.Class},
 		Geometries: a.Geometries.Parse(),
 	}
 }

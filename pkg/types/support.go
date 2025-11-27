@@ -7,12 +7,12 @@ type Support struct {
 	Name             string
 	Multipatch       string
 	Matrix           MeshTypes.Matrix
-	Class            *string
-	Position         *string
+	Class            NodeReference[Class]    // TODO: Node reference
+	Position         NodeReference[Position] // TODO: Node reference
 	Geometries       *Geometries
 	Function         *string
 	ChainLength      float32
-	GDTFSpec         fileName
+	GDTFSpec         NodeReference[GDTF] // TODO: Node reference
 	GDTFMode         string
 	CastShadow       bool
 	Addresses        *Addresses
@@ -21,7 +21,7 @@ type Support struct {
 	Overwrites       []*Overwrite
 	Connections      []*Connection
 	FixtureID        string
-	FixtureIDNumeric int // can be 0 e.g. in MA export
+	FixtureIDNumeric int
 	UnitNumber       int
 	CustomId         int
 	CustomIdType     int

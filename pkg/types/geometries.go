@@ -14,6 +14,6 @@ type Geometry3D struct {
 
 type Symbol struct {
 	UUID   string
-	SymDef string
+	SymDef NodeReference[SymDef] // TODO: Node reference
 	Matrix MeshTypes.Matrix
 }

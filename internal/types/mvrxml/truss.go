@@ -1,6 +1,10 @@
 package MVRXML
 
-import MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
+import (
+	"strconv"
+
+	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
+)
 
 type Truss struct {
 	UUID             string           `xml:"uuid,attr"`
@@ -19,7 +23,7 @@ type Truss struct {
 	CustomCommands   []*CustomCommand `xml:"CustomCommands>CustomCommand"`
 	Overwrites       []*Overwrite     `xml:"Overwrites>Overwrite"`
 	Connections      []*Connection    `xml:"Connections>Connection"`
-	ChildPosition    *string          `xml:"ChildPosition,omitempty"` // TODO: check what this is for
+	ChildPosition    *string          `xml:"ChildPosition,omitempty"` // Node link to the geometry. Starting point is the Geometry Collect of the linked parent GDTF of this object.
 	FixtureID        string           `xml:"FixtureID"`
 	FixtureIDNumeric int              `xml:"FixtureIDNumeric"` // v1.6 only, MA exports 1.5
 	UnitNumber       int              `xml:"UnitNumber"`
@@ -29,19 +33,27 @@ type Truss struct {
 }
 
 func (a *Truss) Parse() *MVRTypes.Truss {
+	fixtureIDNumeric := a.FixtureIDNumeric
+	if a.FixtureIDNumeric == 0 {
+		value, err := strconv.ParseInt(a.FixtureID, 10, 0)
+		if err != nil {
+			// TODO: return err
+		}
+		fixtureIDNumeric = int(value)
+	}
 	return &MVRTypes.Truss{
 		UUID:             a.UUID,
 		Name:             a.Name,
 		Multipatch:       a.Multipatch,
 		Matrix:           a.Matrix.ToMeshMatrix(),
-		Class:            a.Class,
-		GDTFSpec:         a.GDTFSpec,
+		Class:            MVRTypes.NodeReference[MVRTypes.Class]{String: a.Class},
+		GDTFSpec:         MVRTypes.NodeReference[MVRTypes.GDTF]{String: &a.GDTFSpec},
 		GDTFMode:         a.GDTFMode,
 		CastShadow:       a.CastShadow,
-		Position:         a.Position,
+		Position:         MVRTypes.NodeReference[MVRTypes.Position]{String: a.Position},
 		Function:         a.Function,
 		FixtureID:        a.FixtureID,
-		FixtureIDNumeric: a.FixtureIDNumeric,
+		FixtureIDNumeric: fixtureIDNumeric,
 		UnitNumber:       a.UnitNumber,
 		ChildPosition:    a.ChildPosition,
 		Addresses:        a.Addresses.Parse(),

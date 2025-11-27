@@ -1,6 +1,10 @@
 package MVRXML
 
-import MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
+import (
+	"strconv"
+
+	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
+)
 
 type Fixture struct {
 	UUID             string           `xml:"uuid,attr"`
@@ -17,9 +21,9 @@ type Fixture struct {
 	Position         *string          `xml:"Position,omitempty"`
 	Function         *string          `xml:"Function,omitempty"`
 	FixtureID        string           `xml:"FixtureID"`
-	FixtureIDNumeric int              `xml:"FixtureIDNumeric"` // can be 0 e.g. in MA export
+	FixtureIDNumeric int              `xml:"FixtureIDNumeric"`
 	UnitNumber       int              `xml:"UnitNumber"`
-	ChildPosition    string           `xml:"ChildPosition"` // TODO: check what this is for
+	ChildPosition    string           `xml:"ChildPosition"`
 	Addresses        *Addresses       `xml:"Addresses"`
 	Protocols        []*Protocol      `xml:"Protocols>Protocol"`
 	Alignments       []*Alignment     `xml:"Alignments>Alignment"`
@@ -35,22 +39,31 @@ type Fixture struct {
 }
 
 func (a *Fixture) Parse() *MVRTypes.Fixture {
+	// helper as e.g. MA3 does not export this (MVR 1.5)
+	fixtureIDNumeric := a.FixtureIDNumeric
+	if a.FixtureIDNumeric == 0 {
+		value, err := strconv.ParseInt(a.FixtureID, 10, 0)
+		if err != nil {
+			// TODO: return err
+		}
+		fixtureIDNumeric = int(value)
+	}
 	return &MVRTypes.Fixture{
 		UUID:             a.UUID,
 		Name:             a.Name,
 		Multipatch:       a.Multipatch,
 		Matrix:           a.Matrix.ToMeshMatrix(),
-		Class:            a.Class,
-		GDTFSpec:         a.GDTFSpec,
+		Class:            MVRTypes.NodeReference[MVRTypes.Class]{String: a.Class},
+		GDTFSpec:         MVRTypes.NodeReference[MVRTypes.GDTF]{String: &a.GDTFSpec},
 		GDTFMode:         a.GDTFMode,
 		Focus:            a.Focus,
 		CastShadow:       a.CastShadow,
 		DMXInvertPan:     a.DMXInvertPan,
 		DMXInvertTilt:    a.DMXInvertTilt,
-		Position:         a.Position,
+		Position:         MVRTypes.NodeReference[MVRTypes.Position]{String: a.Position},
 		Function:         a.Function,
 		FixtureID:        a.FixtureID,
-		FixtureIDNumeric: a.FixtureIDNumeric,
+		FixtureIDNumeric: fixtureIDNumeric,
 		UnitNumber:       a.UnitNumber,
 		ChildPosition:    a.ChildPosition,
 		Addresses:        a.Addresses.Parse(),

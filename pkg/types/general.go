@@ -55,3 +55,8 @@ func GetDMXAddress(value string) (*DMXAddress, error) {
 	}
 	return &b, nil
 }
+
+type NodeReference[T any] struct {
+	String *string
+	Ptr    *T
+}

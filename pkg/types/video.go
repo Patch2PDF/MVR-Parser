@@ -7,11 +7,11 @@ type VideoScreen struct {
 	Name             string
 	Multipatch       string
 	Matrix           MeshTypes.Matrix
-	Class            *string
+	Class            NodeReference[Class] // TODO: Node reference
 	Geometries       *Geometries
 	Sources          []*Source
 	Function         *string
-	GDTFSpec         fileName
+	GDTFSpec         NodeReference[GDTF] // TODO: Node reference
 	GDTFMode         string
 	CastShadow       bool
 	Addresses        *Addresses
@@ -32,11 +32,11 @@ type Projector struct {
 	Name             string
 	Multipatch       string
 	Matrix           MeshTypes.Matrix
-	Class            *string
+	Class            NodeReference[Class] // TODO: Node reference
 	Geometries       *Geometries
 	Projections      []*Projection
 	Function         *string
-	GDTFSpec         fileName
+	GDTFSpec         NodeReference[GDTF] // TODO: Node reference
 	GDTFMode         string
 	CastShadow       bool
 	Addresses        *Addresses
@@ -53,7 +53,7 @@ type Projector struct {
 }
 
 type Source struct {
-	LinkedGeometry string
+	LinkedGeometry string // reference to a geometry in the gdtf
 	Type           string
 	Value          string
 }

@@ -1,6 +1,10 @@
 package MVRXML
 
-import MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
+import (
+	"strconv"
+
+	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
+)
 
 type Support struct {
 	UUID             string           `xml:"uuid,attr"`
@@ -21,7 +25,7 @@ type Support struct {
 	Overwrites       []*Overwrite     `xml:"Overwrites>Overwrite"`
 	Connections      []*Connection    `xml:"Connections>Connection"`
 	FixtureID        string           `xml:"FixtureID"`
-	FixtureIDNumeric int              `xml:"FixtureIDNumeric"` // can be 0 e.g. in MA export
+	FixtureIDNumeric int              `xml:"FixtureIDNumeric"`
 	UnitNumber       int              `xml:"UnitNumber"`
 	CustomId         int              `xml:"CustomId"`
 	CustomIdType     int              `xml:"CustomIdType"`
@@ -29,19 +33,27 @@ type Support struct {
 }
 
 func (a *Support) Parse() *MVRTypes.Support {
+	fixtureIDNumeric := a.FixtureIDNumeric
+	if a.FixtureIDNumeric == 0 {
+		value, err := strconv.ParseInt(a.FixtureID, 10, 0)
+		if err != nil {
+			// TODO: return err
+		}
+		fixtureIDNumeric = int(value)
+	}
 	return &MVRTypes.Support{
 		UUID:             a.UUID,
 		Name:             a.Name,
 		Multipatch:       a.Multipatch,
 		Matrix:           a.Matrix.ToMeshMatrix(),
-		Class:            a.Class,
-		GDTFSpec:         a.GDTFSpec,
+		Class:            MVRTypes.NodeReference[MVRTypes.Class]{String: a.Class},
+		GDTFSpec:         MVRTypes.NodeReference[MVRTypes.GDTF]{String: &a.GDTFSpec},
 		GDTFMode:         a.GDTFMode,
 		CastShadow:       a.CastShadow,
-		Position:         a.Position,
+		Position:         MVRTypes.NodeReference[MVRTypes.Position]{String: a.Position},
 		Function:         a.Function,
 		FixtureID:        a.FixtureID,
-		FixtureIDNumeric: a.FixtureIDNumeric,
+		FixtureIDNumeric: fixtureIDNumeric,
 		UnitNumber:       a.UnitNumber,
 		Addresses:        a.Addresses.Parse(),
 		Alignments:       ParseList(&a.Alignments),

@@ -7,9 +7,9 @@ type SceneObject struct {
 	Name             string
 	Multipatch       string
 	Matrix           MeshTypes.Matrix
-	Class            *string
+	Class            NodeReference[Class] // TODO: Node reference
 	Geometries       *Geometries
-	GDTFSpec         fileName
+	GDTFSpec         NodeReference[GDTF] // TODO: Node reference
 	GDTFMode         string
 	CastShadow       bool
 	Addresses        *Addresses
@@ -18,7 +18,7 @@ type SceneObject struct {
 	Overwrites       []*Overwrite
 	Connections      []*Connection
 	FixtureID        string
-	FixtureIDNumeric int // can be 0 e.g. in MA export
+	FixtureIDNumeric int
 	UnitNumber       int
 	CustomId         int
 	CustomIdType     int

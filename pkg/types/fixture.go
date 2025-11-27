@@ -7,19 +7,19 @@ type Fixture struct {
 	Name             string
 	Multipatch       *string
 	Matrix           MeshTypes.Matrix
-	Class            *string
-	GDTFSpec         fileName
+	Class            NodeReference[Class] // TODO: Node reference
+	GDTFSpec         NodeReference[GDTF]  // TODO: Node reference
 	GDTFMode         string
 	Focus            string
 	CastShadow       bool
 	DMXInvertPan     bool
 	DMXInvertTilt    bool
-	Position         *string
+	Position         NodeReference[Position] // TODO: Node reference
 	Function         *string
 	FixtureID        string
-	FixtureIDNumeric int // can be 0 e.g. in MA export
+	FixtureIDNumeric int
 	UnitNumber       int
-	ChildPosition    string // TODO: check what this is for
+	ChildPosition    string // Node link to the geometry. Starting point is the Geometry Collect of the linked parent GDTF of this object.
 	Addresses        *Addresses
 	Protocols        []*Protocol
 	Alignments       []*Alignment
