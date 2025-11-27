@@ -1,5 +1,7 @@
 package MVRXML
 
+import MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
+
 type Fixture struct {
 	UUID             string           `xml:"uuid,attr"`
 	Name             string           `xml:"name,attr"`
@@ -32,6 +34,40 @@ type Fixture struct {
 	ChildList
 }
 
+func (a *Fixture) Parse() *MVRTypes.Fixture {
+	return &MVRTypes.Fixture{
+		UUID:             a.UUID,
+		Name:             a.Name,
+		Multipatch:       a.Multipatch,
+		Matrix:           a.Matrix.ToMeshMatrix(),
+		Class:            a.Class,
+		GDTFSpec:         a.GDTFSpec,
+		GDTFMode:         a.GDTFMode,
+		Focus:            a.Focus,
+		CastShadow:       a.CastShadow,
+		DMXInvertPan:     a.DMXInvertPan,
+		DMXInvertTilt:    a.DMXInvertTilt,
+		Position:         a.Position,
+		Function:         a.Function,
+		FixtureID:        a.FixtureID,
+		FixtureIDNumeric: a.FixtureIDNumeric,
+		UnitNumber:       a.UnitNumber,
+		ChildPosition:    a.ChildPosition,
+		Addresses:        a.Addresses.Parse(),
+		Protocols:        ParseList(&a.Protocols),
+		Alignments:       ParseList(&a.Alignments),
+		CustomCommands:   ParseList(&a.CustomCommands),
+		Overwrites:       ParseList(&a.Overwrites),
+		Connections:      ParseList(&a.Connections),
+		Color:            (*MVRTypes.ColorCIE)(a.Color),
+		CustomId:         a.CustomId,
+		CustomIdType:     a.CustomIdType,
+		Mappings:         ParseList(&a.Mappings),
+		Gobo:             (*MVRTypes.Gobo)(a.Gobo),
+		ChildList:        a.ChildList.Parse(),
+	}
+}
+
 type Gobo struct {
 	Rotation float32
 }
@@ -44,6 +80,16 @@ type Protocol struct {
 	Transmission string // Unicast, Multicast, Broadcast, Anycast
 }
 
+func (a *Protocol) Parse() *MVRTypes.Protocol {
+	return &MVRTypes.Protocol{
+		Geometry:     a.Geometry,
+		Name:         a.Name,
+		Type:         a.Type,
+		Version:      a.Version,
+		Transmission: a.Transmission,
+	}
+}
+
 type Mapping struct {
 	LinkedDef string
 	Ux        int
@@ -51,4 +97,15 @@ type Mapping struct {
 	Ox        int
 	Oy        int
 	Rz        float32
+}
+
+func (a *Mapping) Parse() *MVRTypes.Mapping {
+	return &MVRTypes.Mapping{
+		LinkedDef: a.LinkedDef,
+		Ux:        a.Ux,
+		Uy:        a.Uy,
+		Ox:        a.Ox,
+		Oy:        a.Oy,
+		Rz:        a.Rz,
+	}
 }

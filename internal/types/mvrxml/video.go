@@ -1,5 +1,7 @@
 package MVRXML
 
+import MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
+
 type VideoScreen struct {
 	UUID             string           `xml:"uuid,attr"`
 	Name             string           `xml:"name,attr"`
@@ -23,6 +25,33 @@ type VideoScreen struct {
 	CustomId         int              `xml:"CustomId"`
 	CustomIdType     int              `xml:"CustomIdType"`
 	ChildList
+}
+
+func (a *VideoScreen) Parse() *MVRTypes.VideoScreen {
+	return &MVRTypes.VideoScreen{
+		UUID:             a.UUID,
+		Name:             a.Name,
+		Multipatch:       a.Multipatch,
+		Matrix:           a.Matrix.ToMeshMatrix(),
+		Class:            a.Class,
+		GDTFSpec:         a.GDTFSpec,
+		GDTFMode:         a.GDTFMode,
+		CastShadow:       a.CastShadow,
+		Function:         a.Function,
+		FixtureID:        a.FixtureID,
+		FixtureIDNumeric: a.FixtureIDNumeric,
+		UnitNumber:       a.UnitNumber,
+		Addresses:        a.Addresses.Parse(),
+		Alignments:       ParseList(&a.Alignments),
+		CustomCommands:   ParseList(&a.CustomCommands),
+		Overwrites:       ParseList(&a.Overwrites),
+		Connections:      ParseList(&a.Connections),
+		CustomId:         a.CustomId,
+		CustomIdType:     a.CustomIdType,
+		ChildList:        a.ChildList.Parse(),
+		Geometries:       a.Geometries.Parse(),
+		Sources:          ParseList(&a.Sources),
+	}
 }
 
 type Projector struct {
@@ -50,13 +79,55 @@ type Projector struct {
 	ChildList
 }
 
+func (a *Projector) Parse() *MVRTypes.Projector {
+	return &MVRTypes.Projector{
+		UUID:             a.UUID,
+		Name:             a.Name,
+		Multipatch:       a.Multipatch,
+		Matrix:           a.Matrix.ToMeshMatrix(),
+		Class:            a.Class,
+		GDTFSpec:         a.GDTFSpec,
+		GDTFMode:         a.GDTFMode,
+		CastShadow:       a.CastShadow,
+		Function:         a.Function,
+		FixtureID:        a.FixtureID,
+		FixtureIDNumeric: a.FixtureIDNumeric,
+		UnitNumber:       a.UnitNumber,
+		Addresses:        a.Addresses.Parse(),
+		Alignments:       ParseList(&a.Alignments),
+		CustomCommands:   ParseList(&a.CustomCommands),
+		Overwrites:       ParseList(&a.Overwrites),
+		Connections:      ParseList(&a.Connections),
+		CustomId:         a.CustomId,
+		CustomIdType:     a.CustomIdType,
+		ChildList:        a.ChildList.Parse(),
+		Geometries:       a.Geometries.Parse(),
+		Projections:      ParseList(&a.Projections),
+	}
+}
+
 type Source struct {
 	LinkedGeometry string `xml:"linkedGeometry,attr"`
 	Type           string `xml:"type,attr"`
 	Value          string `xml:",innerxml"`
 }
 
+func (a *Source) Parse() *MVRTypes.Source {
+	return &MVRTypes.Source{
+		LinkedGeometry: a.LinkedGeometry,
+		Type:           a.Type,
+		Value:          a.Value,
+	}
+}
+
 type Projection struct {
 	Source         Source `xml:"Source"`
 	ScaleHandeling string `xml:"ScaleHandeling"`
+}
+
+func (a *Projection) Parse() *MVRTypes.Projection {
+	return &MVRTypes.Projection{
+		Source:         *a.Source.Parse(),
+		ScaleHandeling: a.ScaleHandeling,
+	}
 }

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
 )
 
 type Matrix [4][3]float64
@@ -57,6 +59,18 @@ func (m *Matrix) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 		}
 	}
 	return nil
+}
+
+func (m *Matrix) ToMeshMatrix() MeshTypes.Matrix {
+	if m == nil {
+		return MeshTypes.IdentityMatrix()
+	}
+	return MeshTypes.Matrix{
+		X00: m[0][0], X01: m[0][1], X02: m[0][2], X03: m[3][0],
+		X10: m[1][0], X11: m[1][1], X12: m[1][2], X13: m[3][1],
+		X20: m[2][0], X21: m[2][1], X22: m[2][2], X23: m[3][2],
+		X30: 0, X31: 0, X32: 0, X33: 0,
+	}
 }
 
 type fileName = string
@@ -131,3 +145,33 @@ type IPv4 = string
 type IPv6 = string
 
 type Vector = string
+
+type ConvertToDestinationStruct[T any] interface {
+	Parse() T
+}
+
+type ConvertToDestinationMapStruct[T any] interface {
+	ConvertToDestinationStruct[T]
+	ParseKey() string
+}
+
+func ParseList[Source ConvertToDestinationStruct[Destination], Destination any](source *[]Source) []Destination {
+	if source == nil {
+		return nil
+	}
+	var destination []Destination = make([]Destination, len(*source))
+	for index, element := range *source {
+		parsedElement := element.Parse()
+		destination[index] = parsedElement
+	}
+	return destination
+}
+
+func ParseMap[Source ConvertToDestinationMapStruct[Destination], Destination any](source *[]Source) map[string]*Destination {
+	destination := make(map[string]*Destination)
+	for _, element := range *source {
+		parsedElement := element.Parse()
+		destination[element.ParseKey()] = &parsedElement
+	}
+	return destination
+}

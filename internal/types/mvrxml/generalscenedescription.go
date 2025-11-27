@@ -1,5 +1,7 @@
 package MVRXML
 
+import MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
+
 type GeneralSceneDescription struct {
 	VersionMajor    int       `xml:"verMajor,attr"`
 	VersionMinor    int       `xml:"verMinor,attr"`
@@ -7,4 +9,15 @@ type GeneralSceneDescription struct {
 	ProviderVersion string    `xml:"providerVersion,attr"`
 	UserData        *UserData `xml:"UserData"`
 	Scene           Scene     `xml:"Scene"`
+}
+
+func (obj *GeneralSceneDescription) Parse() *MVRTypes.GeneralSceneDescription {
+	return &MVRTypes.GeneralSceneDescription{
+		VersionMajor:    obj.VersionMajor,
+		VersionMinor:    obj.VersionMinor,
+		Provider:        obj.Provider,
+		ProviderVersion: obj.ProviderVersion,
+		UserData:        obj.UserData.Parse(),
+		Scene:           obj.Scene.Parse(),
+	}
 }

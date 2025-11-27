@@ -1,5 +1,7 @@
 package MVRXML
 
+import MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
+
 type Truss struct {
 	UUID             string           `xml:"uuid,attr"`
 	Name             string           `xml:"name,attr"`
@@ -24,4 +26,32 @@ type Truss struct {
 	CustomId         int              `xml:"CustomId"`
 	CustomIdType     int              `xml:"CustomIdType"`
 	ChildList
+}
+
+func (a *Truss) Parse() *MVRTypes.Truss {
+	return &MVRTypes.Truss{
+		UUID:             a.UUID,
+		Name:             a.Name,
+		Multipatch:       a.Multipatch,
+		Matrix:           a.Matrix.ToMeshMatrix(),
+		Class:            a.Class,
+		GDTFSpec:         a.GDTFSpec,
+		GDTFMode:         a.GDTFMode,
+		CastShadow:       a.CastShadow,
+		Position:         a.Position,
+		Function:         a.Function,
+		FixtureID:        a.FixtureID,
+		FixtureIDNumeric: a.FixtureIDNumeric,
+		UnitNumber:       a.UnitNumber,
+		ChildPosition:    a.ChildPosition,
+		Addresses:        a.Addresses.Parse(),
+		Alignments:       ParseList(&a.Alignments),
+		CustomCommands:   ParseList(&a.CustomCommands),
+		Overwrites:       ParseList(&a.Overwrites),
+		Connections:      ParseList(&a.Connections),
+		CustomId:         a.CustomId,
+		CustomIdType:     a.CustomIdType,
+		ChildList:        a.ChildList.Parse(),
+		Geometries:       a.Geometries.Parse(),
+	}
 }
