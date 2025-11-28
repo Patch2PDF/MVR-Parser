@@ -27,3 +27,19 @@ type Truss struct {
 	CustomIdType     int
 	ChildList
 }
+
+func (a *Truss) CreateReferencePointer() {
+	a.ChildList.CreateReferencePointer()
+}
+
+func (a *Truss) ResolveReference() {
+	if a.Class.String != nil {
+		a.Class.Ptr = refPointers.Classes[*a.Class.String]
+	}
+	// a.GDTFSpec.Ptr = refPointers.Classes[*a.Class.String] // TODO:
+	if a.Position.String != nil {
+		a.Position.Ptr = refPointers.Positions[*a.Position.String]
+	}
+	a.Geometries.ResolveReference()
+	a.ChildList.ResolveReference()
+}

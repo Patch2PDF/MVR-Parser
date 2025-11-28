@@ -56,7 +56,7 @@ func (a *Fixture) Parse() *MVRTypes.Fixture {
 		Class:            MVRTypes.NodeReference[MVRTypes.Class]{String: a.Class},
 		GDTFSpec:         MVRTypes.NodeReference[MVRTypes.GDTF]{String: &a.GDTFSpec},
 		GDTFMode:         a.GDTFMode,
-		Focus:            a.Focus,
+		Focus:            MVRTypes.NodeReference[MVRTypes.FocusPoint]{String: &a.Focus},
 		CastShadow:       a.CastShadow,
 		DMXInvertPan:     a.DMXInvertPan,
 		DMXInvertTilt:    a.DMXInvertTilt,
@@ -114,7 +114,7 @@ type Mapping struct {
 
 func (a *Mapping) Parse() *MVRTypes.Mapping {
 	return &MVRTypes.Mapping{
-		LinkedDef: a.LinkedDef,
+		LinkedDef: MVRTypes.NodeReference[MVRTypes.MappingDefinition]{String: &a.LinkedDef},
 		Ux:        a.Ux,
 		Uy:        a.Uy,
 		Ox:        a.Ox,

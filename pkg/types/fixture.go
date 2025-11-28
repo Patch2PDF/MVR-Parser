@@ -7,14 +7,14 @@ type Fixture struct {
 	Name             string
 	Multipatch       *string
 	Matrix           MeshTypes.Matrix
-	Class            NodeReference[Class] // TODO: Node reference
-	GDTFSpec         NodeReference[GDTF]  // TODO: Node reference
+	Class            NodeReference[Class]
+	GDTFSpec         NodeReference[GDTF]
 	GDTFMode         string
-	Focus            string
+	Focus            NodeReference[FocusPoint] // TODO:
 	CastShadow       bool
 	DMXInvertPan     bool
 	DMXInvertTilt    bool
-	Position         NodeReference[Position] // TODO: Node reference
+	Position         NodeReference[Position]
 	Function         *string
 	FixtureID        string
 	FixtureIDNumeric int
@@ -34,6 +34,21 @@ type Fixture struct {
 	ChildList
 }
 
+func (a *Fixture) CreateReferencePointer() {
+	a.ChildList.CreateReferencePointer()
+}
+
+func (a *Fixture) ResolveReference() {
+	if a.Class.String != nil {
+		a.Class.Ptr = refPointers.Classes[*a.Class.String]
+	}
+	// a.GDTFSpec.Ptr = refPointers.Classes[*a.Class.String] // TODO:
+	if a.Position.String != nil {
+		a.Position.Ptr = refPointers.Positions[*a.Position.String]
+	}
+	ResolveReferences(&a.Mappings)
+}
+
 type Gobo struct {
 	Rotation float32
 }
@@ -47,10 +62,14 @@ type Protocol struct {
 }
 
 type Mapping struct {
-	LinkedDef string
+	LinkedDef NodeReference[MappingDefinition]
 	Ux        int
 	Uy        int
 	Ox        int
 	Oy        int
 	Rz        float32
+}
+
+func (a *Mapping) ResolveReference() {
+	a.LinkedDef.Ptr = refPointers.MappingDefinitions[*a.LinkedDef.String]
 }

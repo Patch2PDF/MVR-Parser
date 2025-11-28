@@ -2,6 +2,7 @@ package MVRXML
 
 import (
 	"strconv"
+	"strings"
 
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 )
@@ -76,13 +77,17 @@ func (a *Alignment) Parse() *MVRTypes.Alignment {
 	}
 }
 
-type CustomCommand struct {
-	//TODO:
-	// identical to GDTF ChannelFunction (copy paste?)
-}
+type CustomCommand string
 
 func (a *CustomCommand) Parse() *MVRTypes.CustomCommand {
-	return &MVRTypes.CustomCommand{}
+	segments := strings.Split(string(*a), ",")
+	if len(segments) != 2 {
+		// TODO: return error
+	}
+	return &MVRTypes.CustomCommand{
+		Object: segments[0],
+		Value:  segments[1],
+	}
 }
 
 // This node defines an overwrite with the Universal.gdtt GDTF template inside the MVR to overwrite Wheel Slots, Emitters and Filters for the fixture
@@ -108,6 +113,6 @@ func (a *Connection) Parse() *MVRTypes.Connection {
 	return &MVRTypes.Connection{
 		Own:      a.Own,
 		Other:    a.Other,
-		ToObject: a.ToObject,
+		ToObject: MVRTypes.NodeReference[any]{String: &a.ToObject},
 	}
 }

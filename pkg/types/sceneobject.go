@@ -25,6 +25,19 @@ type SceneObject struct {
 	ChildList
 }
 
+func (a *SceneObject) CreateReferencePointer() {
+	a.ChildList.CreateReferencePointer()
+}
+
+func (a *SceneObject) ResolveReference() {
+	if a.Class.String != nil {
+		a.Class.Ptr = refPointers.Classes[*a.Class.String]
+	}
+	// a.GDTFSpec.Ptr = refPointers.Classes[*a.Class.String] // TODO:
+	a.Geometries.ResolveReference()
+	a.ChildList.ResolveReference()
+}
+
 type Alignment struct {
 	Geometry  string // Defines the Beam Geometry that gets aligned.
 	Up        Vector // default: 0,0,1
@@ -32,8 +45,8 @@ type Alignment struct {
 }
 
 type CustomCommand struct {
-	//TODO:
-	// identical to GDTF ChannelFunction (copy paste?)
+	Object string
+	Value  string
 }
 
 // This node defines an overwrite with the Universal.gdtt GDTF template inside the MVR to overwrite Wheel Slots, Emitters and Filters for the fixture
@@ -43,7 +56,7 @@ type Overwrite struct {
 }
 
 type Connection struct {
-	Own      string // Node Link to the Geometry with DIN SPEC 15800 Type Wiring Object . Starting point is the Geometry Collect of the linked GDTF.
-	Other    string // Node Link to the Geometry with DIN SPEC 15800 Type Wiring Object . Starting point is the Geometry Collect of the linked GDTF of the object defined in toObject.
-	ToObject string // UUID of an other object in the scene.
+	Own      string             // Node Link to the Geometry with DIN SPEC 15800 Type Wiring Object . Starting point is the Geometry Collect of the linked GDTF.
+	Other    string             // Node Link to the Geometry with DIN SPEC 15800 Type Wiring Object . Starting point is the Geometry Collect of the linked GDTF of the object defined in toObject.
+	ToObject NodeReference[any] // UUID of an other object in the scene.
 }

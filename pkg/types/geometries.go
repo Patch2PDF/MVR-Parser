@@ -7,6 +7,10 @@ type Geometries struct {
 	Symbol     []*Symbol
 }
 
+func (a *Geometries) ResolveReference() {
+	ResolveReferences(&a.Symbol)
+}
+
 type Geometry3D struct {
 	FileName fileName
 	Matrix   MeshTypes.Matrix
@@ -14,6 +18,12 @@ type Geometry3D struct {
 
 type Symbol struct {
 	UUID   string
-	SymDef NodeReference[SymDef] // TODO: Node reference
+	SymDef NodeReference[SymDef]
 	Matrix MeshTypes.Matrix
+}
+
+func (a *Symbol) ResolveReference() {
+	if a.SymDef.String != nil {
+		a.SymDef.Ptr = refPointers.SymDefs[*a.SymDef.String]
+	}
 }

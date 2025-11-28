@@ -8,3 +8,11 @@ type GeneralSceneDescription struct {
 	UserData        *UserData
 	Scene           *Scene
 }
+
+func (a *GeneralSceneDescription) CreateReferencePointer() {
+	a.Scene.CreateReferencePointer()
+}
+
+func (a *GeneralSceneDescription) ResolveReference() {
+	a.Scene.ResolveReference()
+}

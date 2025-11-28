@@ -9,3 +9,14 @@ type GroupObject struct {
 	Class  NodeReference[Class] // TODO: Node reference
 	ChildList
 }
+
+func (a *GroupObject) CreateReferencePointer() {
+	a.ChildList.CreateReferencePointer()
+}
+
+func (a *GroupObject) ResolveReference() {
+	if a.Class.String != nil {
+		a.Class.Ptr = refPointers.Classes[*a.Class.String]
+	}
+	a.ChildList.ResolveReference()
+}

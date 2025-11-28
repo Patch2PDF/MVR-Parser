@@ -27,6 +27,19 @@ type VideoScreen struct {
 	ChildList
 }
 
+func (a *VideoScreen) CreateReferencePointer() {
+	a.ChildList.CreateReferencePointer()
+}
+
+func (a *VideoScreen) ResolveReference() {
+	if a.Class.String != nil {
+		a.Class.Ptr = refPointers.Classes[*a.Class.String]
+	}
+	// a.GDTFSpec.Ptr = refPointers.Classes[*a.Class.String] // TODO:
+	a.Geometries.ResolveReference()
+	a.ChildList.ResolveReference()
+}
+
 type Projector struct {
 	UUID             string
 	Name             string
@@ -50,6 +63,19 @@ type Projector struct {
 	CustomId         int
 	CustomIdType     int
 	ChildList
+}
+
+func (a *Projector) CreateReferencePointer() {
+	a.ChildList.CreateReferencePointer()
+}
+
+func (a *Projector) ResolveReference() {
+	if a.Class.String != nil {
+		a.Class.Ptr = refPointers.Classes[*a.Class.String]
+	}
+	// a.GDTFSpec.Ptr = refPointers.Classes[*a.Class.String] // TODO:
+	a.Geometries.ResolveReference()
+	a.ChildList.ResolveReference()
 }
 
 type Source struct {

@@ -9,3 +9,14 @@ type FocusPoint struct {
 	Class      NodeReference[Class] // TODO: Node reference
 	Geometries *Geometries
 }
+
+func (a *FocusPoint) CreateReferencePointer() {
+	refPointers.FoucsPoints[a.UUID] = a
+}
+
+func (a *FocusPoint) ResolveReference() {
+	if a.Class.String != nil {
+		a.Class.Ptr = refPointers.Classes[*a.Class.String]
+	}
+	a.Geometries.ResolveReference()
+}
