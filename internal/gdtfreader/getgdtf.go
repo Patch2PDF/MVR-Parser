@@ -2,6 +2,7 @@ package GDTFReader
 
 import (
 	"archive/zip"
+	"strings"
 
 	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
 	GDTFParser "github.com/Patch2PDF/GDTF-Parser"
@@ -12,8 +13,11 @@ func GetGDTF(fileMap map[string]*zip.File, gdtfMap *map[string]*MVRTypes.GDTF, g
 	if gdtfSpec == "" {
 		return nil
 	}
+	if !strings.HasSuffix(gdtfSpec, ".gdtf") {
+		gdtfSpec = gdtfSpec + ".gdtf"
+	}
 	if (*gdtfMap)[gdtfSpec] == nil {
-		file, err := fileMap[gdtfSpec+".gdtf"].Open()
+		file, err := fileMap[gdtfSpec].Open()
 		if err != nil {
 			return err
 		}
