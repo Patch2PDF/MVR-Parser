@@ -66,9 +66,9 @@ func (m *Matrix) ToMeshMatrix() MeshTypes.Matrix {
 		return MeshTypes.IdentityMatrix()
 	}
 	return MeshTypes.Matrix{
-		X00: m[0][0], X01: m[0][1], X02: m[0][2], X03: m[3][0],
-		X10: m[1][0], X11: m[1][1], X12: m[1][2], X13: m[3][1],
-		X20: m[2][0], X21: m[2][1], X22: m[2][2], X23: m[3][2],
+		X00: m[0][0], X01: m[1][0], X02: m[2][0], X03: m[3][0] / 1000,
+		X10: m[0][1], X11: m[1][1], X12: m[2][1], X13: m[3][1] / 1000,
+		X20: m[0][2], X21: m[1][2], X22: m[2][2], X23: m[3][2] / 1000,
 		X30: 0, X31: 0, X32: 0, X33: 0,
 	}
 }
