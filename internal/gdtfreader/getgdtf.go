@@ -9,15 +9,17 @@ import (
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 )
 
-func GetGDTF(fileMap map[string]*zip.File, gdtfMap *map[string]*MVRTypes.GDTF, gdtfSpec string, gdtfMode string, modelLevel int, readThumbnail bool) error {
+func GetGDTF(fileMap map[string]*zip.File, gdtfSpec string, gdtfMode string, modelLevel int, readThumbnail bool) error {
 	if gdtfSpec == "" {
 		return nil
 	}
+	gdtfFile := gdtfSpec
 	if !strings.HasSuffix(gdtfSpec, ".gdtf") {
-		gdtfSpec = gdtfSpec + ".gdtf"
+		gdtfFile = gdtfFile + ".gdtf"
 	}
-	if (*gdtfMap)[gdtfSpec] == nil {
-		file, err := fileMap[gdtfSpec].Open()
+	ptr := MVRTypes.GetGDTFPointer(gdtfSpec)
+	if ptr == nil {
+		file, err := fileMap[gdtfFile].Open()
 		if err != nil {
 			return err
 		}
@@ -33,16 +35,16 @@ func GetGDTF(fileMap map[string]*zip.File, gdtfMap *map[string]*MVRTypes.GDTF, g
 			}
 			meshes[gdtfMode] = mesh
 		}
-		(*gdtfMap)[gdtfSpec] = &MVRTypes.GDTF{
+		MVRTypes.AddGDTFPointer(gdtfSpec, &MVRTypes.GDTF{
 			Data:   gdtf,
 			Meshes: meshes,
-		}
-	} else if modelLevel >= MVRTypes.BuildFixtureModels && (*gdtfMap)[gdtfSpec].Meshes[gdtfMode] == nil {
-		mesh, err := (*gdtfMap)[gdtfSpec].Data.BuildMesh(gdtfMode)
+		})
+	} else if modelLevel >= MVRTypes.BuildFixtureModels && ptr.Meshes[gdtfMode] == nil {
+		mesh, err := ptr.Data.BuildMesh(gdtfMode)
 		if err != nil {
 			return err
 		}
-		(*gdtfMap)[gdtfSpec].Meshes[gdtfMode] = mesh
+		ptr.Meshes[gdtfMode] = mesh
 	}
 	return nil
 }

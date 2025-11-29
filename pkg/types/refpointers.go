@@ -1,7 +1,7 @@
 package MVRTypes
 
 type ReferencePointers struct {
-	// GDTFSpecs          map[string]*GDTF // handled seperately
+	GDTFSpecs          map[string]*GDTF // handled seperately
 	Classes            map[string]*Class
 	Positions          map[string]*Position
 	SymDefs            map[string]*SymDef
@@ -11,7 +11,7 @@ type ReferencePointers struct {
 }
 
 var refPointers ReferencePointers = ReferencePointers{
-	// GDTFSpecs:          map[string]*GDTF{}, // handled seperately
+	GDTFSpecs:          map[string]*GDTF{}, // handled seperately
 	Classes:            map[string]*Class{},
 	Positions:          map[string]*Position{},
 	SymDefs:            map[string]*SymDef{},
@@ -66,4 +66,12 @@ func ResolveReferencesMap[T ReferenceResolver](source *map[string]T) {
 	for i := range *source {
 		(*source)[i].ResolveReference()
 	}
+}
+
+func AddGDTFPointer(name string, a *GDTF) {
+	refPointers.GDTFSpecs[name] = a
+}
+
+func GetGDTFPointer(name string) *GDTF {
+	return refPointers.GDTFSpecs[name]
 }

@@ -9,6 +9,7 @@ type Scene struct {
 
 func (a *Scene) CreateReferencePointer() {
 	a.AuxData.CreateReferencePointer()
+	CreateReferencePointers(&a.Layers)
 }
 
 func (a *Scene) ResolveReference() {

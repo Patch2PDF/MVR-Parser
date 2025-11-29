@@ -36,7 +36,7 @@ func (a *Support) ResolveReference() {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
-	// a.GDTFSpec.Ptr = refPointers.Classes[*a.Class.String] // TODO:
+	a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
 	if a.Position.String != nil {
 		a.Position.Ptr = refPointers.Positions[*a.Position.String]
 	}

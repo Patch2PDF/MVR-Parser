@@ -42,9 +42,14 @@ func (a *Fixture) ResolveReference() {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
-	// a.GDTFSpec.Ptr = refPointers.Classes[*a.Class.String] // TODO:
+	if a.GDTFSpec.String != nil {
+		a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
+	}
 	if a.Position.String != nil {
 		a.Position.Ptr = refPointers.Positions[*a.Position.String]
+	}
+	if a.Focus.String != nil {
+		a.Focus.Ptr = refPointers.FoucsPoints[*a.Focus.String]
 	}
 	ResolveReferences(&a.Mappings)
 }
