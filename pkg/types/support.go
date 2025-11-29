@@ -7,12 +7,12 @@ type Support struct {
 	Name             string
 	Multipatch       string
 	Matrix           MeshTypes.Matrix
-	Class            NodeReference[Class]    // TODO: Node reference
-	Position         NodeReference[Position] // TODO: Node reference
+	Class            NodeReference[Class]
+	Position         NodeReference[Position]
 	Geometries       *Geometries
 	Function         *string
 	ChainLength      float32
-	GDTFSpec         NodeReference[GDTF] // TODO: Node reference
+	GDTFSpec         NodeReference[GDTF]
 	GDTFMode         string
 	CastShadow       bool
 	Addresses        *Addresses
@@ -36,7 +36,9 @@ func (a *Support) ResolveReference() {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
-	a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
+	if a.GDTFSpec.String != nil {
+		a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
+	}
 	if a.Position.String != nil {
 		a.Position.Ptr = refPointers.Positions[*a.Position.String]
 	}

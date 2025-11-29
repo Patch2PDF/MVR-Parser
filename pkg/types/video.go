@@ -7,11 +7,11 @@ type VideoScreen struct {
 	Name             string
 	Multipatch       string
 	Matrix           MeshTypes.Matrix
-	Class            NodeReference[Class] // TODO: Node reference
+	Class            NodeReference[Class]
 	Geometries       *Geometries
 	Sources          []*Source
 	Function         *string
-	GDTFSpec         NodeReference[GDTF] // TODO: Node reference
+	GDTFSpec         NodeReference[GDTF]
 	GDTFMode         string
 	CastShadow       bool
 	Addresses        *Addresses
@@ -35,7 +35,9 @@ func (a *VideoScreen) ResolveReference() {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
-	a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
+	if a.GDTFSpec.String != nil {
+		a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
+	}
 	a.Geometries.ResolveReference()
 	a.ChildList.ResolveReference()
 }
@@ -45,11 +47,11 @@ type Projector struct {
 	Name             string
 	Multipatch       string
 	Matrix           MeshTypes.Matrix
-	Class            NodeReference[Class] // TODO: Node reference
+	Class            NodeReference[Class]
 	Geometries       *Geometries
 	Projections      []*Projection
 	Function         *string
-	GDTFSpec         NodeReference[GDTF] // TODO: Node reference
+	GDTFSpec         NodeReference[GDTF]
 	GDTFMode         string
 	CastShadow       bool
 	Addresses        *Addresses
@@ -73,7 +75,9 @@ func (a *Projector) ResolveReference() {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
-	a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
+	if a.GDTFSpec.String != nil {
+		a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
+	}
 	a.Geometries.ResolveReference()
 	a.ChildList.ResolveReference()
 }

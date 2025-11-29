@@ -10,7 +10,7 @@ type Fixture struct {
 	Class            NodeReference[Class]
 	GDTFSpec         NodeReference[GDTF]
 	GDTFMode         string
-	Focus            NodeReference[FocusPoint] // TODO:
+	Focus            NodeReference[FocusPoint]
 	CastShadow       bool
 	DMXInvertPan     bool
 	DMXInvertTilt    bool

@@ -6,7 +6,7 @@ type GroupObject struct {
 	UUID   string
 	Name   string
 	Matrix MeshTypes.Matrix
-	Class  NodeReference[Class] // TODO: Node reference
+	Class  NodeReference[Class]
 	ChildList
 }
 
