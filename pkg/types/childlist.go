@@ -2,7 +2,7 @@ package MVRTypes
 
 type ChildList struct {
 	SceneObjects []*SceneObject
-	GroupObjects []*SceneObject
+	GroupObjects []*GroupObject
 	FocusPoints  []*FocusPoint
 	Fixtures     []*Fixture
 	Supports     []*Support

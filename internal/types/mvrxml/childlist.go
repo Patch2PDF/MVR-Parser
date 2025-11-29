@@ -4,7 +4,7 @@ import MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 
 type ChildList struct {
 	SceneObjects []*SceneObject `xml:"ChildList>SceneObject,omitempty"`
-	GroupObjects []*SceneObject `xml:"ChildList>GroupObject,omitempty"`
+	GroupObjects []*GroupObject `xml:"ChildList>GroupObject,omitempty"`
 	FocusPoints  []*FocusPoint  `xml:"ChildList>FocusPoint,omitempty"`
 	Fixtures     []*Fixture     `xml:"ChildList>Fixture,omitempty"`
 	Supports     []*Support     `xml:"ChildList>Support,omitempty"`
