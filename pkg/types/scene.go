@@ -1,6 +1,10 @@
 package MVRTypes
 
-import "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+import (
+	"archive/zip"
+
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+)
 
 type Scene struct {
 	AuxData *AuxData
@@ -31,6 +35,10 @@ func (a *AuxData) CreateReferencePointer() {
 	CreateReferencePointers(&a.Classes)
 }
 
+func (a *AuxData) ReadMesh(fileMap map[string]*zip.File) error {
+	return ReadMeshes(a.SymDefs, fileMap)
+}
+
 // contains the graphics so the scene can refer to this, thus optimizing repetition of the geometry
 type SymDef struct {
 	UUID       string
@@ -44,6 +52,10 @@ func (a *SymDef) CreateReferencePointer() {
 
 func (a *SymDef) ResolveReference() {
 	a.Geometries.ResolveReference()
+}
+
+func (a *SymDef) ReadMesh(fileMap map[string]*zip.File) error {
+	return a.Geometries.ReadMesh(fileMap)
 }
 
 // logical grouping of lighting devices and trusses

@@ -1,6 +1,10 @@
 package MVRTypes
 
-import "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+import (
+	"archive/zip"
+
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+)
 
 type VideoScreen struct {
 	UUID             string
@@ -42,6 +46,14 @@ func (a *VideoScreen) ResolveReference() {
 	a.ChildList.ResolveReference()
 }
 
+func (a *VideoScreen) ReadMesh(fileMap map[string]*zip.File) error {
+	err := a.Geometries.ReadMesh(fileMap)
+	if err != nil {
+		return err
+	}
+	return a.ChildList.ReadMesh(fileMap)
+}
+
 type Projector struct {
 	UUID             string
 	Name             string
@@ -80,6 +92,14 @@ func (a *Projector) ResolveReference() {
 	}
 	a.Geometries.ResolveReference()
 	a.ChildList.ResolveReference()
+}
+
+func (a *Projector) ReadMesh(fileMap map[string]*zip.File) error {
+	err := a.Geometries.ReadMesh(fileMap)
+	if err != nil {
+		return err
+	}
+	return a.ChildList.ReadMesh(fileMap)
 }
 
 type Source struct {

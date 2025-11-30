@@ -1,6 +1,10 @@
 package MVRTypes
 
-import "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+import (
+	"archive/zip"
+
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+)
 
 type FocusPoint struct {
 	UUID       string
@@ -19,4 +23,8 @@ func (a *FocusPoint) ResolveReference() {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
 	a.Geometries.ResolveReference()
+}
+
+func (a *FocusPoint) ReadMesh(fileMap map[string]*zip.File) error {
+	return a.Geometries.ReadMesh(fileMap)
 }

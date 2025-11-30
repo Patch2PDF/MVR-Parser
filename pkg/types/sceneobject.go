@@ -1,6 +1,10 @@
 package MVRTypes
 
-import "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+import (
+	"archive/zip"
+
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+)
 
 type SceneObject struct {
 	UUID             string
@@ -38,6 +42,14 @@ func (a *SceneObject) ResolveReference() {
 	}
 	a.Geometries.ResolveReference()
 	a.ChildList.ResolveReference()
+}
+
+func (a *SceneObject) ReadMesh(fileMap map[string]*zip.File) error {
+	err := a.Geometries.ReadMesh(fileMap)
+	if err != nil {
+		return err
+	}
+	return a.ChildList.ReadMesh(fileMap)
 }
 
 type Alignment struct {

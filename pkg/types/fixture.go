@@ -1,6 +1,10 @@
 package MVRTypes
 
-import "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+import (
+	"archive/zip"
+
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+)
 
 type Fixture struct {
 	UUID             string
@@ -52,6 +56,10 @@ func (a *Fixture) ResolveReference() {
 		a.Focus.Ptr = refPointers.FoucsPoints[*a.Focus.String]
 	}
 	ResolveReferences(&a.Mappings)
+}
+
+func (a *Fixture) ReadMesh(fileMap map[string]*zip.File) error {
+	return a.ChildList.ReadMesh(fileMap)
 }
 
 type Gobo struct {

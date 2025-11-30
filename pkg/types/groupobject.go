@@ -1,6 +1,10 @@
 package MVRTypes
 
-import "github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+import (
+	"archive/zip"
+
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+)
 
 type GroupObject struct {
 	UUID   string
@@ -19,4 +23,8 @@ func (a *GroupObject) ResolveReference() {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
 	a.ChildList.ResolveReference()
+}
+
+func (a *GroupObject) ReadMesh(fileMap map[string]*zip.File) error {
+	return a.ChildList.ReadMesh(fileMap)
 }
