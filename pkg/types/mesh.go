@@ -15,11 +15,18 @@ func GenerateMesh(parentTransformation MeshTypes.Matrix, ownTransformation MeshT
 func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTypes.Mesh {
 	newMesh := &MeshTypes.Mesh{}
 	for _, obj := range a.SceneObjects {
+		// GDTF model
 		if obj.GDTFSpec.Ptr != nil {
 			temp := GenerateMesh(parentTransformation, obj.Matrix, obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode])
 			newMesh.Add(temp)
 		}
 		matrix := parentTransformation.Mul(obj.Matrix)
+
+		// custom mvr geometries
+		geometries := obj.Geometries.GenerateMesh(matrix)
+		newMesh.Add(geometries)
+
+		// recursive / render childs
 		childs := obj.ChildList.GenerateMesh(matrix)
 		newMesh.Add(childs)
 	}
@@ -28,13 +35,13 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 		childs := obj.ChildList.GenerateMesh(matrix)
 		newMesh.Add(childs)
 	}
-	// for _, obj := range a.FocusPoints {
-	// 	temp := GenerateMesh(parentTransformation, obj.Matrix, obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode])
-	// 	newMesh = append(newMesh, temp)
-	// matrix := parentTransformation.Mul(obj.Matrix)
-	// childs := obj.ChildList.GenerateMesh(matrix)
-	// newMesh = append(newMesh, childs...)
-	// }
+	for _, obj := range a.FocusPoints {
+		matrix := parentTransformation.Mul(obj.Matrix)
+
+		// custom mvr geometries
+		geometries := obj.Geometries.GenerateMesh(matrix)
+		newMesh.Add(geometries)
+	}
 	for _, obj := range a.Fixtures {
 		if obj.GDTFSpec.Ptr != nil {
 			temp := GenerateMesh(parentTransformation, obj.Matrix, obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode])
@@ -50,6 +57,11 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 			newMesh.Add(temp)
 		}
 		matrix := parentTransformation.Mul(obj.Matrix)
+
+		// custom mvr geometries
+		geometries := obj.Geometries.GenerateMesh(matrix)
+		newMesh.Add(geometries)
+
 		childs := obj.ChildList.GenerateMesh(matrix)
 		newMesh.Add(childs)
 	}
@@ -59,6 +71,11 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 			newMesh.Add(temp)
 		}
 		matrix := parentTransformation.Mul(obj.Matrix)
+
+		// custom mvr geometries
+		geometries := obj.Geometries.GenerateMesh(matrix)
+		newMesh.Add(geometries)
+
 		childs := obj.ChildList.GenerateMesh(matrix)
 		newMesh.Add(childs)
 	}
@@ -68,6 +85,11 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 			newMesh.Add(temp)
 		}
 		matrix := parentTransformation.Mul(obj.Matrix)
+
+		// custom mvr geometries
+		geometries := obj.Geometries.GenerateMesh(matrix)
+		newMesh.Add(geometries)
+
 		childs := obj.ChildList.GenerateMesh(matrix)
 		newMesh.Add(childs)
 	}
@@ -77,6 +99,11 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 			newMesh.Add(temp)
 		}
 		matrix := parentTransformation.Mul(obj.Matrix)
+
+		// custom mvr geometries
+		geometries := obj.Geometries.GenerateMesh(matrix)
+		newMesh.Add(geometries)
+
 		childs := obj.ChildList.GenerateMesh(matrix)
 		newMesh.Add(childs)
 	}
