@@ -1,7 +1,7 @@
-github.com/Patch2PDF/GDTF-Mesh-Reader v0.5.1 h1:8kU9Crs7sxt35pI37gmOhbQJzTnVCbXwVAdP7wFl+tY=
-github.com/Patch2PDF/GDTF-Mesh-Reader v0.5.1/go.mod h1:4Uipj5UA1HhD3v032aSnEFlpItN80UY5zKB15mIeVwQ=
-github.com/Patch2PDF/GDTF-Parser v0.1.0 h1:r4MHrtBHpxPyK/bRYxGqTg+tx9MEf5ur4ZmNVkhjJDI=
-github.com/Patch2PDF/GDTF-Parser v0.1.0/go.mod h1:uCV7VVOUy71P+/9zyXH3tKLpMfww0OxTItTXw/vPFjI=
+github.com/Patch2PDF/GDTF-Mesh-Reader v1.1.0 h1:qW4nLOFUq/m59gBGcaAOhGahzPDQAAxoSB5XhK2tnng=
+github.com/Patch2PDF/GDTF-Mesh-Reader v1.1.0/go.mod h1:4Uipj5UA1HhD3v032aSnEFlpItN80UY5zKB15mIeVwQ=
+github.com/Patch2PDF/GDTF-Parser v0.1.3 h1:UK5Hw4VVPvG32avje17SYgvDUJjq66atC7QqZMBPYXE=
+github.com/Patch2PDF/GDTF-Parser v0.1.3/go.mod h1:DZiykPkY5dRmrxZ+8Wbp/O8Z9eLRRgDJn+G4FG6qm6Y=
 github.com/go-test/deep v1.0.1 h1:UQhStjbkDClarlmv0am7OXXO4/GaPdCGiUiMTvi28sg=
 github.com/go-test/deep v1.0.1/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/qmuntal/gltf v0.28.0 h1:C4A1temWMPtcI2+qNfpfRq8FEJxoBGUN3ZZM8BCc+xU=
