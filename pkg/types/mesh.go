@@ -12,7 +12,7 @@ func GenerateMesh(parentTransformation MeshTypes.Matrix, ownTransformation MeshT
 	return &mesh1
 }
 
-func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTypes.Mesh {
+func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix, modelConfig *ModelConfig) *MeshTypes.Mesh {
 	newMesh := &MeshTypes.Mesh{}
 	for _, obj := range a.SceneObjects {
 		// GDTF model
@@ -27,12 +27,12 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 		newMesh.Add(geometries)
 
 		// recursive / render childs
-		childs := obj.ChildList.GenerateMesh(matrix)
+		childs := obj.ChildList.GenerateMesh(matrix, modelConfig)
 		newMesh.Add(childs)
 	}
 	for _, obj := range a.GroupObjects {
 		matrix := parentTransformation.Mul(obj.Matrix)
-		childs := obj.ChildList.GenerateMesh(matrix)
+		childs := obj.ChildList.GenerateMesh(matrix, modelConfig)
 		newMesh.Add(childs)
 	}
 	for _, obj := range a.FocusPoints {
@@ -48,7 +48,7 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 			newMesh.Add(temp)
 		}
 		matrix := parentTransformation.Mul(obj.Matrix)
-		childs := obj.ChildList.GenerateMesh(matrix)
+		childs := obj.ChildList.GenerateMesh(matrix, modelConfig)
 		newMesh.Add(childs)
 	}
 	for _, obj := range a.Supports {
@@ -62,7 +62,7 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 		geometries := obj.Geometries.GenerateMesh(matrix)
 		newMesh.Add(geometries)
 
-		childs := obj.ChildList.GenerateMesh(matrix)
+		childs := obj.ChildList.GenerateMesh(matrix, modelConfig)
 		newMesh.Add(childs)
 	}
 	for _, obj := range a.Trusses {
@@ -76,7 +76,7 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 		geometries := obj.Geometries.GenerateMesh(matrix)
 		newMesh.Add(geometries)
 
-		childs := obj.ChildList.GenerateMesh(matrix)
+		childs := obj.ChildList.GenerateMesh(matrix, modelConfig)
 		newMesh.Add(childs)
 	}
 	for _, obj := range a.VideoScreens {
@@ -90,7 +90,7 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 		geometries := obj.Geometries.GenerateMesh(matrix)
 		newMesh.Add(geometries)
 
-		childs := obj.ChildList.GenerateMesh(matrix)
+		childs := obj.ChildList.GenerateMesh(matrix, modelConfig)
 		newMesh.Add(childs)
 	}
 	for _, obj := range a.Projectors {
@@ -104,7 +104,7 @@ func (a *ChildList) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTyp
 		geometries := obj.Geometries.GenerateMesh(matrix)
 		newMesh.Add(geometries)
 
-		childs := obj.ChildList.GenerateMesh(matrix)
+		childs := obj.ChildList.GenerateMesh(matrix, modelConfig)
 		newMesh.Add(childs)
 	}
 	return newMesh
