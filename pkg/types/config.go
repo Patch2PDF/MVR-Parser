@@ -6,7 +6,7 @@ type ModelConfig struct {
 }
 
 type GlobalModelConfig struct {
-	RenderOnlyAddressedFixture *bool
+	RenderOnlyAddressedFixture bool
 }
 
 var FalsePtr = false
@@ -14,7 +14,7 @@ var TruePtr = true
 
 func (a GlobalModelConfig) asNodeConfig() ModelNodeConfig {
 	return ModelNodeConfig{
-		RenderOnlyAddressedFixture: a.RenderOnlyAddressedFixture,
+		RenderOnlyAddressedFixture: &a.RenderOnlyAddressedFixture,
 		Exclude:                    &FalsePtr,
 	}
 }

@@ -15,30 +15,25 @@ type MeshTransformationTask struct {
 
 type ParentMeshConfig struct {
 	Transformation MeshTypes.Matrix
-	ModelConfig    *ModelNodeConfig
+	ModelConfig    ModelNodeConfig
 }
 
 type MeshTaskCreator interface {
 	CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig)
 }
 
-func getConfigOverrides(modelConfig ModelConfig, parentMeshConfig ParentMeshConfig, uuid string) *ModelNodeConfig {
+func getConfigOverrides(modelConfig ModelConfig, parentMeshConfig ParentMeshConfig, uuid string) ModelNodeConfig {
 	configOverrides := parentMeshConfig.ModelConfig
 	if _, found := modelConfig.Individual[uuid]; found {
 		temp := modelConfig.Individual[uuid]
-		configOverrides = &temp
+		if temp.Exclude != nil {
+			configOverrides.Exclude = temp.Exclude
+		}
+		if temp.RenderOnlyAddressedFixture != nil {
+			configOverrides.RenderOnlyAddressedFixture = temp.RenderOnlyAddressedFixture
+		}
 	}
 	return configOverrides
-}
-
-func getConfig(modelConfig ModelConfig, configOverrides *ModelNodeConfig) ModelNodeConfig {
-	var config ModelNodeConfig
-	if configOverrides != nil {
-		config = *configOverrides
-	} else {
-		config = modelConfig.Global.asNodeConfig()
-	}
-	return config
 }
 
 func CreateMeshTasks[T MeshTaskCreator](objects []T, meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
@@ -51,6 +46,7 @@ func (a *GeneralSceneDescription) CreateMeshTasks(meshTasks *MeshTasks, modelCon
 	for _, layer := range a.Scene.Layers {
 		layer.CreateMeshTask(meshTasks, modelConfig, ParentMeshConfig{
 			Transformation: MeshTypes.IdentityMatrix(),
+			ModelConfig:    modelConfig.Global.asNodeConfig(),
 		})
 	}
 }
@@ -67,8 +63,7 @@ func (a *ChildList) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig
 }
 
 func (obj *GroupObject) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	configOverrides := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-	config := getConfig(modelConfig, configOverrides)
+	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
 
 	if config.Exclude != nil && *config.Exclude {
 		return
@@ -78,13 +73,12 @@ func (obj *GroupObject) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelCo
 
 	obj.ChildList.CreateMeshTask(meshTasks, modelConfig, ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    configOverrides,
+		ModelConfig:    config,
 	})
 }
 
 func (obj *SceneObject) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	configOverrides := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-	config := getConfig(modelConfig, configOverrides)
+	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
 
 	if config.Exclude != nil && *config.Exclude {
 		return
@@ -98,20 +92,19 @@ func (obj *SceneObject) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelCo
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    configOverrides,
+		ModelConfig:    config,
 	}
 
 	obj.Geometries.CreateMeshTask(meshTasks, modelConfig, parentConf)
 
 	obj.ChildList.CreateMeshTask(meshTasks, modelConfig, ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    configOverrides,
+		ModelConfig:    config,
 	})
 }
 
 func (obj *FocusPoint) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	configOverrides := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-	config := getConfig(modelConfig, configOverrides)
+	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
 
 	if config.Exclude != nil && *config.Exclude {
 		return
@@ -120,13 +113,12 @@ func (obj *FocusPoint) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelCon
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
 	obj.Geometries.CreateMeshTask(meshTasks, modelConfig, ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    configOverrides,
+		ModelConfig:    config,
 	})
 }
 
 func (obj *Fixture) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	configOverrides := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-	config := getConfig(modelConfig, configOverrides)
+	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
 
 	if config.Exclude != nil && *config.Exclude {
 		return
@@ -143,13 +135,12 @@ func (obj *Fixture) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig
 
 	obj.ChildList.CreateMeshTask(meshTasks, modelConfig, ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    configOverrides,
+		ModelConfig:    config,
 	})
 }
 
 func (obj *Support) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	configOverrides := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-	config := getConfig(modelConfig, configOverrides)
+	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
 
 	if config.Exclude != nil && *config.Exclude {
 		return
@@ -163,7 +154,7 @@ func (obj *Support) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    configOverrides,
+		ModelConfig:    config,
 	}
 
 	obj.Geometries.CreateMeshTask(meshTasks, modelConfig, parentConf)
@@ -172,8 +163,7 @@ func (obj *Support) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig
 }
 
 func (obj *Truss) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	configOverrides := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-	config := getConfig(modelConfig, configOverrides)
+	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
 
 	if config.Exclude != nil && *config.Exclude {
 		return
@@ -187,7 +177,7 @@ func (obj *Truss) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, 
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    configOverrides,
+		ModelConfig:    config,
 	}
 
 	obj.Geometries.CreateMeshTask(meshTasks, modelConfig, parentConf)
@@ -196,8 +186,7 @@ func (obj *Truss) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, 
 }
 
 func (obj *VideoScreen) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	configOverrides := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-	config := getConfig(modelConfig, configOverrides)
+	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
 
 	if config.Exclude != nil && *config.Exclude {
 		return
@@ -211,7 +200,7 @@ func (obj *VideoScreen) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelCo
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    configOverrides,
+		ModelConfig:    config,
 	}
 
 	obj.Geometries.CreateMeshTask(meshTasks, modelConfig, parentConf)
@@ -220,8 +209,7 @@ func (obj *VideoScreen) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelCo
 }
 
 func (obj *Projector) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	configOverrides := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-	config := getConfig(modelConfig, configOverrides)
+	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
 
 	if config.Exclude != nil && *config.Exclude {
 		return
@@ -235,7 +223,7 @@ func (obj *Projector) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConf
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    configOverrides,
+		ModelConfig:    config,
 	}
 
 	obj.Geometries.CreateMeshTask(meshTasks, modelConfig, parentConf)
@@ -261,8 +249,7 @@ func (obj *Geometries) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelCon
 }
 
 func (a *Symbol) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	configOverrides := getConfigOverrides(modelConfig, parentMeshConfig, a.UUID)
-	config := getConfig(modelConfig, configOverrides)
+	config := getConfigOverrides(modelConfig, parentMeshConfig, a.UUID)
 	if config.Exclude != nil && *config.Exclude {
 		return
 	}
@@ -270,7 +257,7 @@ func (a *Symbol) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, p
 		matrix := parentMeshConfig.Transformation.Mul(a.Matrix)
 		a.SymDef.Ptr.Geometries.CreateMeshTask(meshTasks, modelConfig, ParentMeshConfig{
 			Transformation: matrix,
-			ModelConfig:    configOverrides,
+			ModelConfig:    config,
 		})
 	}
 }
