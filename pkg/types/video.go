@@ -40,7 +40,7 @@ func (a *VideoScreen) ResolveReference() {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
 	if a.GDTFSpec.String != nil {
-		a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
+		a.GDTFSpec.Ptr = GetGDTFPointer(*a.GDTFSpec.String)
 	}
 	a.Geometries.ResolveReference()
 	a.ChildList.ResolveReference()
@@ -88,7 +88,7 @@ func (a *Projector) ResolveReference() {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
 	if a.GDTFSpec.String != nil {
-		a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
+		a.GDTFSpec.Ptr = GetGDTFPointer(*a.GDTFSpec.String)
 	}
 	a.Geometries.ResolveReference()
 	a.ChildList.ResolveReference()

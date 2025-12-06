@@ -3,6 +3,7 @@ package MVRXML
 import (
 	"strconv"
 
+	GDTFReader "github.com/Patch2PDF/MVR-Parser/internal/gdtfreader"
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 )
 
@@ -48,6 +49,7 @@ func (a *Fixture) Parse() *MVRTypes.Fixture {
 		}
 		fixtureIDNumeric = int(value)
 	}
+	GDTFReader.AddToTaskMap(a.GDTFSpec, a.GDTFMode)
 	return &MVRTypes.Fixture{
 		UUID:             a.UUID,
 		Name:             a.Name,

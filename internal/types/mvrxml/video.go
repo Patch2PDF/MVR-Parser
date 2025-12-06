@@ -3,6 +3,7 @@ package MVRXML
 import (
 	"strconv"
 
+	GDTFReader "github.com/Patch2PDF/MVR-Parser/internal/gdtfreader"
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 )
 
@@ -32,6 +33,15 @@ type VideoScreen struct {
 }
 
 func (a *VideoScreen) Parse() *MVRTypes.VideoScreen {
+	fixtureIDNumeric := a.FixtureIDNumeric
+	if a.FixtureIDNumeric == 0 {
+		value, err := strconv.ParseInt(a.FixtureID, 10, 0)
+		if err != nil {
+			// TODO: return err
+		}
+		fixtureIDNumeric = int(value)
+	}
+	GDTFReader.AddToTaskMap(a.GDTFSpec, a.GDTFMode)
 	return &MVRTypes.VideoScreen{
 		UUID:             a.UUID,
 		Name:             a.Name,
@@ -43,7 +53,7 @@ func (a *VideoScreen) Parse() *MVRTypes.VideoScreen {
 		CastShadow:       a.CastShadow,
 		Function:         a.Function,
 		FixtureID:        a.FixtureID,
-		FixtureIDNumeric: a.FixtureIDNumeric,
+		FixtureIDNumeric: fixtureIDNumeric,
 		UnitNumber:       a.UnitNumber,
 		Addresses:        a.Addresses.Parse(),
 		Alignments:       ParseList(&a.Alignments),
@@ -92,6 +102,7 @@ func (a *Projector) Parse() *MVRTypes.Projector {
 		}
 		fixtureIDNumeric = int(value)
 	}
+	GDTFReader.AddToTaskMap(a.GDTFSpec, a.GDTFMode)
 	return &MVRTypes.Projector{
 		UUID:             a.UUID,
 		Name:             a.Name,

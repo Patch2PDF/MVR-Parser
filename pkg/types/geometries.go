@@ -61,29 +61,3 @@ func (a *Geometry3D) ReadMesh(fileMap map[string]*zip.File) error {
 	}
 	return nil
 }
-
-func (a *Geometries) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTypes.Mesh {
-	newMesh := &MeshTypes.Mesh{}
-	for _, element := range a.Geometry3D {
-		temp := GenerateMesh(parentTransformation, element.Matrix, element.Mesh)
-		// temp, err := GenerateMesh(parentTransformation, element.Matrix, element.Mesh)
-		// if err != nil {
-		// 	return err
-		// }
-		newMesh.Add(temp)
-	}
-	for _, element := range a.Symbol {
-		matrix := parentTransformation.Mul(element.Matrix)
-		temp := element.GenerateMesh(matrix)
-		newMesh.Add(temp)
-	}
-	return newMesh
-}
-
-func (a *Symbol) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTypes.Mesh {
-	if a.SymDef.Ptr != nil {
-		matrix := parentTransformation.Mul(a.Matrix)
-		return a.SymDef.Ptr.Geometries.GenerateMesh(matrix)
-	}
-	return &MeshTypes.Mesh{}
-}

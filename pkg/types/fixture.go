@@ -47,7 +47,7 @@ func (a *Fixture) ResolveReference() {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
 	if a.GDTFSpec.String != nil {
-		a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
+		a.GDTFSpec.Ptr = GetGDTFPointer(*a.GDTFSpec.String)
 	}
 	if a.Position.String != nil {
 		a.Position.Ptr = refPointers.Positions[*a.Position.String]

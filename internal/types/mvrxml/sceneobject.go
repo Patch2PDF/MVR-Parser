@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"strings"
 
+	GDTFReader "github.com/Patch2PDF/MVR-Parser/internal/gdtfreader"
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 )
 
@@ -39,6 +40,7 @@ func (a *SceneObject) Parse() *MVRTypes.SceneObject {
 		}
 		fixtureIDNumeric = int(value)
 	}
+	GDTFReader.AddToTaskMap(a.GDTFSpec, a.GDTFMode)
 	return &MVRTypes.SceneObject{
 		UUID:             a.UUID,
 		Name:             a.Name,
