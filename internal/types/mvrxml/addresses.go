@@ -7,13 +7,13 @@ type Addresses struct {
 	Networks  []*Network `xml:"Network"`
 }
 
-func (a *Addresses) Parse() *MVRTypes.Addresses {
+func (a *Addresses) Parse(config ParseConfigData) *MVRTypes.Addresses {
 	if a == nil {
 		return nil
 	}
 	return &MVRTypes.Addresses{
-		Addresses: ParseList(&a.Addresses),
-		Networks:  ParseList(&a.Networks),
+		Addresses: ParseList(config, &a.Addresses),
+		Networks:  ParseList(config, &a.Networks),
 	}
 }
 
@@ -22,7 +22,7 @@ type Address struct {
 	Value string `xml:",innerxml"` // needs to be converted into numeric, with seperate universe field at another time
 }
 
-func (a *Address) Parse() *MVRTypes.Address {
+func (a *Address) Parse(config ParseConfigData) *MVRTypes.Address {
 	address, _ := MVRTypes.GetDMXAddress(a.Value) // TODO: return err
 	return &MVRTypes.Address{
 		Break: a.Break,
@@ -39,7 +39,7 @@ type Network struct {
 	Hostname   *string `xml:"hostname,attr"`
 }
 
-func (a *Network) Parse() *MVRTypes.Network {
+func (a *Network) Parse(config ParseConfigData) *MVRTypes.Network {
 	return &MVRTypes.Network{
 		Geometry:   a.Geometry,
 		IPv4:       a.IPv4,

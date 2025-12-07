@@ -292,8 +292,8 @@ func CompleteMeshTasks(meshTasks *MeshTasks, config MVRParserConfig) *MeshTypes.
 	wg.Wait()
 	close(results)
 
+	// pre allocate length to reduce array resizings
 	meshes := make([]*MeshTypes.Mesh, 0, len(results))
-	// meshes := []*MeshTypes.Mesh{}
 	var totalTriangles int = 0
 
 	for mesh := range results {

@@ -10,12 +10,12 @@ type FocusPoint struct {
 	Geometries Geometries `xml:"Geometries"`
 }
 
-func (a *FocusPoint) Parse() *MVRTypes.FocusPoint {
+func (a *FocusPoint) Parse(config ParseConfigData) *MVRTypes.FocusPoint {
 	return &MVRTypes.FocusPoint{
 		UUID:       a.UUID,
 		Name:       a.Name,
 		Matrix:     a.Matrix.ToMeshMatrix(),
 		Class:      MVRTypes.NodeReference[MVRTypes.Class]{String: a.Class},
-		Geometries: a.Geometries.Parse(),
+		Geometries: a.Geometries.Parse(config),
 	}
 }

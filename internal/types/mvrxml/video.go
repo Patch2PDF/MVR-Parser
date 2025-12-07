@@ -32,7 +32,7 @@ type VideoScreen struct {
 	ChildList
 }
 
-func (a *VideoScreen) Parse() *MVRTypes.VideoScreen {
+func (a *VideoScreen) Parse(config ParseConfigData) *MVRTypes.VideoScreen {
 	fixtureIDNumeric := a.FixtureIDNumeric
 	if a.FixtureIDNumeric == 0 {
 		value, err := strconv.ParseInt(a.FixtureID, 10, 0)
@@ -41,7 +41,7 @@ func (a *VideoScreen) Parse() *MVRTypes.VideoScreen {
 		}
 		fixtureIDNumeric = int(value)
 	}
-	GDTFReader.AddToTaskMap(a.GDTFSpec, a.GDTFMode)
+	GDTFReader.AddToTaskMap(config.GDTFTaskMap, a.GDTFSpec, a.GDTFMode)
 	return &MVRTypes.VideoScreen{
 		UUID:             a.UUID,
 		Name:             a.Name,
@@ -55,16 +55,16 @@ func (a *VideoScreen) Parse() *MVRTypes.VideoScreen {
 		FixtureID:        a.FixtureID,
 		FixtureIDNumeric: fixtureIDNumeric,
 		UnitNumber:       a.UnitNumber,
-		Addresses:        a.Addresses.Parse(),
-		Alignments:       ParseList(&a.Alignments),
-		CustomCommands:   ParseList(&a.CustomCommands),
-		Overwrites:       ParseList(&a.Overwrites),
-		Connections:      ParseList(&a.Connections),
+		Addresses:        a.Addresses.Parse(config),
+		Alignments:       ParseList(config, &a.Alignments),
+		CustomCommands:   ParseList(config, &a.CustomCommands),
+		Overwrites:       ParseList(config, &a.Overwrites),
+		Connections:      ParseList(config, &a.Connections),
 		CustomId:         a.CustomId,
 		CustomIdType:     a.CustomIdType,
-		ChildList:        a.ChildList.Parse(),
-		Geometries:       a.Geometries.Parse(),
-		Sources:          ParseList(&a.Sources),
+		ChildList:        a.ChildList.Parse(config),
+		Geometries:       a.Geometries.Parse(config),
+		Sources:          ParseList(config, &a.Sources),
 	}
 }
 
@@ -93,7 +93,7 @@ type Projector struct {
 	ChildList
 }
 
-func (a *Projector) Parse() *MVRTypes.Projector {
+func (a *Projector) Parse(config ParseConfigData) *MVRTypes.Projector {
 	fixtureIDNumeric := a.FixtureIDNumeric
 	if a.FixtureIDNumeric == 0 {
 		value, err := strconv.ParseInt(a.FixtureID, 10, 0)
@@ -102,7 +102,7 @@ func (a *Projector) Parse() *MVRTypes.Projector {
 		}
 		fixtureIDNumeric = int(value)
 	}
-	GDTFReader.AddToTaskMap(a.GDTFSpec, a.GDTFMode)
+	GDTFReader.AddToTaskMap(config.GDTFTaskMap, a.GDTFSpec, a.GDTFMode)
 	return &MVRTypes.Projector{
 		UUID:             a.UUID,
 		Name:             a.Name,
@@ -116,16 +116,16 @@ func (a *Projector) Parse() *MVRTypes.Projector {
 		FixtureID:        a.FixtureID,
 		FixtureIDNumeric: fixtureIDNumeric,
 		UnitNumber:       a.UnitNumber,
-		Addresses:        a.Addresses.Parse(),
-		Alignments:       ParseList(&a.Alignments),
-		CustomCommands:   ParseList(&a.CustomCommands),
-		Overwrites:       ParseList(&a.Overwrites),
-		Connections:      ParseList(&a.Connections),
+		Addresses:        a.Addresses.Parse(config),
+		Alignments:       ParseList(config, &a.Alignments),
+		CustomCommands:   ParseList(config, &a.CustomCommands),
+		Overwrites:       ParseList(config, &a.Overwrites),
+		Connections:      ParseList(config, &a.Connections),
 		CustomId:         a.CustomId,
 		CustomIdType:     a.CustomIdType,
-		ChildList:        a.ChildList.Parse(),
-		Geometries:       a.Geometries.Parse(),
-		Projections:      ParseList(&a.Projections),
+		ChildList:        a.ChildList.Parse(config),
+		Geometries:       a.Geometries.Parse(config),
+		Projections:      ParseList(config, &a.Projections),
 	}
 }
 
@@ -135,7 +135,7 @@ type Source struct {
 	Value          string `xml:",innerxml"`
 }
 
-func (a *Source) Parse() *MVRTypes.Source {
+func (a *Source) Parse(config ParseConfigData) *MVRTypes.Source {
 	return &MVRTypes.Source{
 		LinkedGeometry: a.LinkedGeometry,
 		Type:           a.Type,
@@ -148,9 +148,9 @@ type Projection struct {
 	ScaleHandeling string `xml:"ScaleHandeling"`
 }
 
-func (a *Projection) Parse() *MVRTypes.Projection {
+func (a *Projection) Parse(config ParseConfigData) *MVRTypes.Projection {
 	return &MVRTypes.Projection{
-		Source:         *a.Source.Parse(),
+		Source:         *a.Source.Parse(config),
 		ScaleHandeling: a.ScaleHandeling,
 	}
 }

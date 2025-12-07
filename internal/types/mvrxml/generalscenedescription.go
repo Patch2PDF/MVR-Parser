@@ -11,13 +11,13 @@ type GeneralSceneDescription struct {
 	Scene           Scene     `xml:"Scene"`
 }
 
-func (obj *GeneralSceneDescription) Parse() *MVRTypes.GeneralSceneDescription {
+func (obj *GeneralSceneDescription) Parse(config ParseConfigData) *MVRTypes.GeneralSceneDescription {
 	return &MVRTypes.GeneralSceneDescription{
 		VersionMajor:    obj.VersionMajor,
 		VersionMinor:    obj.VersionMinor,
 		Provider:        obj.Provider,
 		ProviderVersion: obj.ProviderVersion,
-		UserData:        obj.UserData.Parse(),
-		Scene:           obj.Scene.Parse(),
+		UserData:        obj.UserData.Parse(config),
+		Scene:           obj.Scene.Parse(config),
 	}
 }

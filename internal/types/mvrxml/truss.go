@@ -33,7 +33,7 @@ type Truss struct {
 	ChildList
 }
 
-func (a *Truss) Parse() *MVRTypes.Truss {
+func (a *Truss) Parse(config ParseConfigData) *MVRTypes.Truss {
 	fixtureIDNumeric := a.FixtureIDNumeric
 	if a.FixtureIDNumeric == 0 {
 		value, err := strconv.ParseInt(a.FixtureID, 10, 0)
@@ -42,7 +42,7 @@ func (a *Truss) Parse() *MVRTypes.Truss {
 		}
 		fixtureIDNumeric = int(value)
 	}
-	GDTFReader.AddToTaskMap(a.GDTFSpec, a.GDTFMode)
+	GDTFReader.AddToTaskMap(config.GDTFTaskMap, a.GDTFSpec, a.GDTFMode)
 	return &MVRTypes.Truss{
 		UUID:             a.UUID,
 		Name:             a.Name,
@@ -58,14 +58,14 @@ func (a *Truss) Parse() *MVRTypes.Truss {
 		FixtureIDNumeric: fixtureIDNumeric,
 		UnitNumber:       a.UnitNumber,
 		ChildPosition:    a.ChildPosition,
-		Addresses:        a.Addresses.Parse(),
-		Alignments:       ParseList(&a.Alignments),
-		CustomCommands:   ParseList(&a.CustomCommands),
-		Overwrites:       ParseList(&a.Overwrites),
-		Connections:      ParseList(&a.Connections),
+		Addresses:        a.Addresses.Parse(config),
+		Alignments:       ParseList(config, &a.Alignments),
+		CustomCommands:   ParseList(config, &a.CustomCommands),
+		Overwrites:       ParseList(config, &a.Overwrites),
+		Connections:      ParseList(config, &a.Connections),
 		CustomId:         a.CustomId,
 		CustomIdType:     a.CustomIdType,
-		ChildList:        a.ChildList.Parse(),
-		Geometries:       a.Geometries.Parse(),
+		ChildList:        a.ChildList.Parse(config),
+		Geometries:       a.Geometries.Parse(config),
 	}
 }

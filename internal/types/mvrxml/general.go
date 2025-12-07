@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+	GDTFReader "github.com/Patch2PDF/MVR-Parser/internal/gdtfreader"
 )
 
 type Matrix [4][3]float64
@@ -147,7 +148,7 @@ type IPv6 = string
 type Vector = string
 
 type ConvertToDestinationStruct[T any] interface {
-	Parse() T
+	Parse(config ParseConfigData) T
 }
 
 type ConvertToDestinationMapStruct[T any] interface {
@@ -155,23 +156,27 @@ type ConvertToDestinationMapStruct[T any] interface {
 	ParseKey() string
 }
 
-func ParseList[Source ConvertToDestinationStruct[Destination], Destination any](source *[]Source) []Destination {
+func ParseList[Source ConvertToDestinationStruct[Destination], Destination any](config ParseConfigData, source *[]Source) []Destination {
 	if source == nil {
 		return nil
 	}
 	var destination []Destination = make([]Destination, len(*source))
 	for index, element := range *source {
-		parsedElement := element.Parse()
+		parsedElement := element.Parse(config)
 		destination[index] = parsedElement
 	}
 	return destination
 }
 
-func ParseMap[Source ConvertToDestinationMapStruct[Destination], Destination any](source *[]Source) map[string]*Destination {
+func ParseMap[Source ConvertToDestinationMapStruct[Destination], Destination any](config ParseConfigData, source *[]Source) map[string]*Destination {
 	destination := make(map[string]*Destination)
 	for _, element := range *source {
-		parsedElement := element.Parse()
+		parsedElement := element.Parse(config)
 		destination[element.ParseKey()] = &parsedElement
 	}
 	return destination
+}
+
+type ParseConfigData struct {
+	GDTFTaskMap *map[string]*GDTFReader.GDTFTask
 }

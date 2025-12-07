@@ -15,7 +15,6 @@ import (
 func ParseMVRZipReader(zipfile *zip.Reader, config MVRTypes.MVRParserConfig) (*MVRTypes.GeneralSceneDescription, error) {
 	var mvrData MVRXML.GeneralSceneDescription
 
-	// TODO: Leverage GoRoutines
 	// TODO: docs + tests + readme
 
 	// put all files in zip into the filemap
@@ -38,9 +37,13 @@ func ParseMVRZipReader(zipfile *zip.Reader, config MVRTypes.MVRParserConfig) (*M
 		return nil, err
 	}
 
-	parsedData := mvrData.Parse()
+	parseConfig := MVRXML.ParseConfigData{
+		GDTFTaskMap: &map[string]*GDTFReader.GDTFTask{},
+	}
 
-	GDTFReader.GetGDTFs(fileMap, config)
+	parsedData := mvrData.Parse(parseConfig)
+
+	GDTFReader.GetGDTFs(parseConfig.GDTFTaskMap, fileMap, config)
 
 	parsedData.CreateReferencePointer()
 

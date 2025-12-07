@@ -31,7 +31,7 @@ type SceneObject struct {
 	ChildList
 }
 
-func (a *SceneObject) Parse() *MVRTypes.SceneObject {
+func (a *SceneObject) Parse(config ParseConfigData) *MVRTypes.SceneObject {
 	fixtureIDNumeric := a.FixtureIDNumeric
 	if a.FixtureIDNumeric == 0 {
 		value, err := strconv.ParseInt(a.FixtureID, 10, 0)
@@ -40,7 +40,7 @@ func (a *SceneObject) Parse() *MVRTypes.SceneObject {
 		}
 		fixtureIDNumeric = int(value)
 	}
-	GDTFReader.AddToTaskMap(a.GDTFSpec, a.GDTFMode)
+	GDTFReader.AddToTaskMap(config.GDTFTaskMap, a.GDTFSpec, a.GDTFMode)
 	return &MVRTypes.SceneObject{
 		UUID:             a.UUID,
 		Name:             a.Name,
@@ -53,15 +53,15 @@ func (a *SceneObject) Parse() *MVRTypes.SceneObject {
 		FixtureID:        a.FixtureID,
 		FixtureIDNumeric: fixtureIDNumeric,
 		UnitNumber:       a.UnitNumber,
-		Addresses:        a.Addresses.Parse(),
-		Alignments:       ParseList(&a.Alignments),
-		CustomCommands:   ParseList(&a.CustomCommands),
-		Overwrites:       ParseList(&a.Overwrites),
-		Connections:      ParseList(&a.Connections),
+		Addresses:        a.Addresses.Parse(config),
+		Alignments:       ParseList(config, &a.Alignments),
+		CustomCommands:   ParseList(config, &a.CustomCommands),
+		Overwrites:       ParseList(config, &a.Overwrites),
+		Connections:      ParseList(config, &a.Connections),
 		CustomId:         a.CustomId,
 		CustomIdType:     a.CustomIdType,
-		ChildList:        a.ChildList.Parse(),
-		Geometries:       a.Geometries.Parse(),
+		ChildList:        a.ChildList.Parse(config),
+		Geometries:       a.Geometries.Parse(config),
 	}
 }
 
@@ -71,7 +71,7 @@ type Alignment struct {
 	Direction Vector `xml:"direction,attr"` // default: 0,0,-1
 }
 
-func (a *Alignment) Parse() *MVRTypes.Alignment {
+func (a *Alignment) Parse(config ParseConfigData) *MVRTypes.Alignment {
 	return &MVRTypes.Alignment{
 		Geometry:  a.Geometry,
 		Up:        a.Up,
@@ -81,7 +81,7 @@ func (a *Alignment) Parse() *MVRTypes.Alignment {
 
 type CustomCommand string
 
-func (a *CustomCommand) Parse() *MVRTypes.CustomCommand {
+func (a *CustomCommand) Parse(config ParseConfigData) *MVRTypes.CustomCommand {
 	segments := strings.Split(string(*a), ",")
 	if len(segments) != 2 {
 		// TODO: return error
@@ -98,7 +98,7 @@ type Overwrite struct {
 	Target    string `xml:"target,attr"`    // Node Link to the Wheel, Emitter or Filter. Starting point is the the collect of the linked GDTF of the fixture. When no target is given, it will be like a static gobo or filter that you attach in front of all beams
 }
 
-func (a *Overwrite) Parse() *MVRTypes.Overwrite {
+func (a *Overwrite) Parse(config ParseConfigData) *MVRTypes.Overwrite {
 	return &MVRTypes.Overwrite{
 		Universal: a.Universal,
 		Target:    a.Target,
@@ -111,7 +111,7 @@ type Connection struct {
 	ToObject string `xml:"toObject,attr"` // UUID of an other object in the scene.
 }
 
-func (a *Connection) Parse() *MVRTypes.Connection {
+func (a *Connection) Parse(config ParseConfigData) *MVRTypes.Connection {
 	return &MVRTypes.Connection{
 		Own:      a.Own,
 		Other:    a.Other,
