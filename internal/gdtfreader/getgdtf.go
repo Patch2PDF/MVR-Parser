@@ -29,33 +29,36 @@ func AddToTaskMap(gdtfTaskMap *map[string]*GDTFTask, gdtfSpec string, gdtfMode s
 	}
 }
 
-func getGDTF(task *GDTFTask, fileMap map[string]*zip.File, config MVRTypes.MVRParserConfig) error {
-	gdtfFile := task.GDTFSpec
-	if !strings.HasSuffix(gdtfFile, ".gdtf") {
-		gdtfFile = gdtfFile + ".gdtf"
-	}
-	file, err := fileMap[gdtfFile].Open()
-	if err != nil {
-		return err
-	}
-	gdtf, err := GDTFParser.ParseGDTFByFile(file, config.MeshHandling >= MVRTypes.ReadMeshesIntoModels, config.ReadThumbnail)
-	if err != nil {
-		return err
-	}
-	meshes := map[string]*MeshTypes.Mesh{}
-	for gdtfMode := range task.GDTFModes {
-		if config.MeshHandling >= MVRTypes.BuildFixtureModels {
-			mesh, err := gdtf.BuildMesh(gdtfMode)
-			if err != nil {
-				return err
+func getGDTF(jobs <-chan *GDTFTask, results chan<- *MVRTypes.GDTF, fileMap map[string]*zip.File, config MVRTypes.MVRParserConfig) error {
+	for task := range jobs {
+		gdtfFile := task.GDTFSpec
+		if !strings.HasSuffix(gdtfFile, ".gdtf") {
+			gdtfFile = gdtfFile + ".gdtf"
+		}
+		file, err := fileMap[gdtfFile].Open()
+		if err != nil {
+			return err
+		}
+		gdtf, err := GDTFParser.ParseGDTFByFile(file, config.MeshHandling >= MVRTypes.ReadMeshesIntoModels, config.ReadThumbnail)
+		if err != nil {
+			return err
+		}
+		meshes := map[string]*MeshTypes.Mesh{}
+		for gdtfMode := range task.GDTFModes {
+			if config.MeshHandling >= MVRTypes.BuildFixtureModels {
+				mesh, err := gdtf.BuildMesh(gdtfMode)
+				if err != nil {
+					return err
+				}
+				meshes[gdtfMode] = mesh
 			}
-			meshes[gdtfMode] = mesh
+		}
+		results <- &MVRTypes.GDTF{
+			Name:   task.GDTFSpec,
+			Data:   gdtf,
+			Meshes: meshes,
 		}
 	}
-	MVRTypes.AddGDTFPointer(task.GDTFSpec, &MVRTypes.GDTF{
-		Data:   gdtf,
-		Meshes: meshes,
-	})
 	return nil
 }
 
@@ -64,16 +67,11 @@ func GetGDTFs(gdtfTaskMap *map[string]*GDTFTask, fileMap map[string]*zip.File, c
 
 	var numWorkers = config.GDTFParserWorkers
 	jobs := make(chan *GDTFTask, len(*gdtfTaskMap))
+	results := make(chan *MVRTypes.GDTF, len(*gdtfTaskMap))
 
-	for i := 0; i < numWorkers; i++ {
+	for range numWorkers {
 		eg.Go(func() error {
-			for j := range jobs {
-				err := getGDTF(j, fileMap, config)
-				if err != nil {
-					return err
-				}
-			}
-			return nil
+			return getGDTF(jobs, results, fileMap, config)
 		})
 	}
 
@@ -82,5 +80,16 @@ func GetGDTFs(gdtfTaskMap *map[string]*GDTFTask, fileMap map[string]*zip.File, c
 	}
 	close(jobs)
 
-	return eg.Wait()
+	err := eg.Wait()
+	if err != nil {
+		return err
+	}
+
+	close(results)
+
+	for gdtf := range results {
+		MVRTypes.AddGDTFPointer(gdtf.Name, gdtf)
+	}
+
+	return nil
 }

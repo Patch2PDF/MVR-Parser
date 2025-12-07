@@ -1,7 +1,5 @@
 package MVRTypes
 
-import "sync"
-
 type ReferencePointers struct {
 	GDTFSpecs          map[string]*GDTF // handled seperately
 	Classes            map[string]*Class
@@ -12,6 +10,7 @@ type ReferencePointers struct {
 	Object             map[string]*any
 }
 
+// TODO: make concurrency safe (no global var)
 var refPointers ReferencePointers = ReferencePointers{
 	GDTFSpecs:          map[string]*GDTF{}, // handled seperately
 	Classes:            map[string]*Class{},
@@ -70,17 +69,6 @@ func ResolveReferencesMap[T ReferenceResolver](source *map[string]T) {
 	}
 }
 
-var gdtfLock = &sync.Mutex{}
-
 func AddGDTFPointer(name string, a *GDTF) {
-	gdtfLock.Lock()
 	refPointers.GDTFSpecs[name] = a
-	gdtfLock.Unlock()
-}
-
-func GetGDTFPointer(name string) *GDTF {
-	gdtfLock.Lock()
-	ptr := refPointers.GDTFSpecs[name]
-	gdtfLock.Unlock()
-	return ptr
 }
