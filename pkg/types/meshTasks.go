@@ -85,10 +85,12 @@ func (obj *SceneObject) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelCo
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
-	*meshTasks = append(*meshTasks, MeshTransformationTask{
-		Matrix:       matrix,
-		OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
-	})
+	if obj.GDTFSpec.Ptr != nil {
+		*meshTasks = append(*meshTasks, MeshTransformationTask{
+			Matrix:       matrix,
+			OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
+		})
+	}
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
@@ -128,10 +130,12 @@ func (obj *Fixture) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
-	*meshTasks = append(*meshTasks, MeshTransformationTask{
-		Matrix:       matrix,
-		OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
-	})
+	if obj.GDTFSpec.Ptr != nil {
+		*meshTasks = append(*meshTasks, MeshTransformationTask{
+			Matrix:       matrix,
+			OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
+		})
+	}
 
 	obj.ChildList.CreateMeshTask(meshTasks, modelConfig, ParentMeshConfig{
 		Transformation: matrix,
@@ -147,10 +151,12 @@ func (obj *Support) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
-	*meshTasks = append(*meshTasks, MeshTransformationTask{
-		Matrix:       matrix,
-		OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
-	})
+	if obj.GDTFSpec.Ptr != nil {
+		*meshTasks = append(*meshTasks, MeshTransformationTask{
+			Matrix:       matrix,
+			OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
+		})
+	}
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
@@ -170,10 +176,12 @@ func (obj *Truss) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConfig, 
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
-	*meshTasks = append(*meshTasks, MeshTransformationTask{
-		Matrix:       matrix,
-		OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
-	})
+	if obj.GDTFSpec.Ptr != nil {
+		*meshTasks = append(*meshTasks, MeshTransformationTask{
+			Matrix:       matrix,
+			OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
+		})
+	}
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
@@ -193,10 +201,12 @@ func (obj *VideoScreen) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelCo
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
-	*meshTasks = append(*meshTasks, MeshTransformationTask{
-		Matrix:       matrix,
-		OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
-	})
+	if obj.GDTFSpec.Ptr != nil {
+		*meshTasks = append(*meshTasks, MeshTransformationTask{
+			Matrix:       matrix,
+			OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
+		})
+	}
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
@@ -216,10 +226,12 @@ func (obj *Projector) CreateMeshTask(meshTasks *MeshTasks, modelConfig ModelConf
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
-	*meshTasks = append(*meshTasks, MeshTransformationTask{
-		Matrix:       matrix,
-		OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
-	})
+	if obj.GDTFSpec.Ptr != nil {
+		*meshTasks = append(*meshTasks, MeshTransformationTask{
+			Matrix:       matrix,
+			OriginalMesh: obj.GDTFSpec.Ptr.Meshes[obj.GDTFMode],
+		})
+	}
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
