@@ -6,9 +6,9 @@ type UserData struct {
 	Data []Data `xml:"Data"`
 }
 
-func (u *UserData) Parse() *MVRTypes.UserData {
+func (u *UserData) Parse(config ParseConfigData) *MVRTypes.UserData {
 	return &MVRTypes.UserData{
-		Data: ParseList(&u.Data),
+		Data: ParseList(config, &u.Data),
 	}
 }
 
@@ -17,6 +17,6 @@ type Data struct {
 	Version  string `xml:"ver,attr"`
 }
 
-func (u Data) Parse() MVRTypes.Data {
+func (u Data) Parse(config ParseConfigData) MVRTypes.Data {
 	return MVRTypes.Data(u)
 }

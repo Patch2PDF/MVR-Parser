@@ -10,12 +10,12 @@ type GroupObject struct {
 	ChildList
 }
 
-func (a *GroupObject) Parse() *MVRTypes.GroupObject {
+func (a *GroupObject) Parse(config ParseConfigData) *MVRTypes.GroupObject {
 	return &MVRTypes.GroupObject{
 		UUID:      a.UUID,
 		Name:      a.Name,
 		Matrix:    a.Matrix.ToMeshMatrix(),
 		Class:     MVRTypes.NodeReference[MVRTypes.Class]{String: a.Class},
-		ChildList: a.ChildList.Parse(),
+		ChildList: a.ChildList.Parse(config),
 	}
 }

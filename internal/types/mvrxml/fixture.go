@@ -3,6 +3,7 @@ package MVRXML
 import (
 	"strconv"
 
+	GDTFReader "github.com/Patch2PDF/MVR-Parser/internal/gdtfreader"
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 )
 
@@ -38,7 +39,7 @@ type Fixture struct {
 	ChildList
 }
 
-func (a *Fixture) Parse() *MVRTypes.Fixture {
+func (a *Fixture) Parse(config ParseConfigData) *MVRTypes.Fixture {
 	// helper as e.g. MA3 does not export this (MVR 1.5)
 	fixtureIDNumeric := a.FixtureIDNumeric
 	if a.FixtureIDNumeric == 0 {
@@ -48,6 +49,7 @@ func (a *Fixture) Parse() *MVRTypes.Fixture {
 		}
 		fixtureIDNumeric = int(value)
 	}
+	GDTFReader.AddToTaskMap(config.GDTFTaskMap, a.GDTFSpec, a.GDTFMode)
 	return &MVRTypes.Fixture{
 		UUID:             a.UUID,
 		Name:             a.Name,
@@ -66,18 +68,18 @@ func (a *Fixture) Parse() *MVRTypes.Fixture {
 		FixtureIDNumeric: fixtureIDNumeric,
 		UnitNumber:       a.UnitNumber,
 		ChildPosition:    a.ChildPosition,
-		Addresses:        a.Addresses.Parse(),
-		Protocols:        ParseList(&a.Protocols),
-		Alignments:       ParseList(&a.Alignments),
-		CustomCommands:   ParseList(&a.CustomCommands),
-		Overwrites:       ParseList(&a.Overwrites),
-		Connections:      ParseList(&a.Connections),
+		Addresses:        a.Addresses.Parse(config),
+		Protocols:        ParseList(config, &a.Protocols),
+		Alignments:       ParseList(config, &a.Alignments),
+		CustomCommands:   ParseList(config, &a.CustomCommands),
+		Overwrites:       ParseList(config, &a.Overwrites),
+		Connections:      ParseList(config, &a.Connections),
 		Color:            (*MVRTypes.ColorCIE)(a.Color),
 		CustomId:         a.CustomId,
 		CustomIdType:     a.CustomIdType,
-		Mappings:         ParseList(&a.Mappings),
+		Mappings:         ParseList(config, &a.Mappings),
 		Gobo:             (*MVRTypes.Gobo)(a.Gobo),
-		ChildList:        a.ChildList.Parse(),
+		ChildList:        a.ChildList.Parse(config),
 	}
 }
 
@@ -93,7 +95,7 @@ type Protocol struct {
 	Transmission string // Unicast, Multicast, Broadcast, Anycast
 }
 
-func (a *Protocol) Parse() *MVRTypes.Protocol {
+func (a *Protocol) Parse(config ParseConfigData) *MVRTypes.Protocol {
 	return &MVRTypes.Protocol{
 		Geometry:     a.Geometry,
 		Name:         a.Name,
@@ -112,7 +114,7 @@ type Mapping struct {
 	Rz        float32
 }
 
-func (a *Mapping) Parse() *MVRTypes.Mapping {
+func (a *Mapping) Parse(config ParseConfigData) *MVRTypes.Mapping {
 	return &MVRTypes.Mapping{
 		LinkedDef: MVRTypes.NodeReference[MVRTypes.MappingDefinition]{String: &a.LinkedDef},
 		Ux:        a.Ux,

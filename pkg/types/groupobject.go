@@ -14,15 +14,15 @@ type GroupObject struct {
 	ChildList
 }
 
-func (a *GroupObject) CreateReferencePointer() {
-	a.ChildList.CreateReferencePointer()
+func (a *GroupObject) CreateReferencePointer(refPointers *ReferencePointers) {
+	a.ChildList.CreateReferencePointer(refPointers)
 }
 
-func (a *GroupObject) ResolveReference() {
+func (a *GroupObject) ResolveReference(refPointers *ReferencePointers) {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
-	a.ChildList.ResolveReference()
+	a.ChildList.ResolveReference(refPointers)
 }
 
 func (a *GroupObject) ReadMesh(fileMap map[string]*zip.File) error {

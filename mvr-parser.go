@@ -3,21 +3,18 @@ package MVRParser
 import (
 	"archive/zip"
 	"encoding/xml"
+	"fmt"
 	"io"
-	"os"
 
-	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
-	STL "github.com/Patch2PDF/GDTF-Parser/examples/stl"
+	GDTFReader "github.com/Patch2PDF/MVR-Parser/internal/gdtfreader"
 	"github.com/Patch2PDF/MVR-Parser/internal/geometry3d"
 	MVRXML "github.com/Patch2PDF/MVR-Parser/internal/types/mvrxml"
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 )
 
-func ParseMVRZipReader(zipfile *zip.Reader, meshHandling int, readThumbnail bool, modelConfig *MVRTypes.ModelConfig) (*MVRTypes.GeneralSceneDescription, error) {
+func ParseMVRZipReader(zipfile *zip.Reader, config MVRTypes.MVRParserConfig) (*MVRTypes.GeneralSceneDescription, error) {
 	var mvrData MVRXML.GeneralSceneDescription
 
-	// TODO: build stage model only if requested + allow toggle for only including addressed fixtures in model, possibly excluding groups
-	// TODO: Leverage GoRoutines
 	// TODO: docs + tests + readme
 
 	// put all files in zip into the filemap
@@ -40,31 +37,30 @@ func ParseMVRZipReader(zipfile *zip.Reader, meshHandling int, readThumbnail bool
 		return nil, err
 	}
 
-	// read required gdtf files and generate models as desired
-	for _, layer := range mvrData.Scene.Layers {
-		err := layer.ChildList.GetGDTFs(fileMap, meshHandling, readThumbnail)
-		if err != nil {
-			return nil, err
-		}
+	parseConfig := MVRXML.ParseConfigData{
+		GDTFTaskMap: &map[string]*GDTFReader.GDTFTask{},
 	}
 
-	parsedData := mvrData.Parse()
+	parsedData := mvrData.Parse(parseConfig)
 
-	parsedData.CreateReferencePointer()
+	refPointers := MVRTypes.CreateRefPointersMap()
 
-	parsedData.ResolveReference()
+	GDTFReader.GetGDTFs(parseConfig.GDTFTaskMap, refPointers, fileMap, config)
 
-	if meshHandling >= MVRTypes.ReadMeshesIntoModels {
+	parsedData.CreateReferencePointer(refPointers)
+
+	parsedData.ResolveReference(refPointers)
+
+	if config.MeshHandling >= MVRTypes.ReadMeshesIntoModels {
 		geometry3d.ReadMeshes(fileMap, parsedData)
 	}
 
-	if meshHandling >= MVRTypes.BuildStageModel {
-		mesh := parsedData.Scene.Layers[0].ChildList.GenerateMesh(MeshTypes.IdentityMatrix(), modelConfig)
+	if config.MeshHandling >= MVRTypes.BuildStageModel {
+		meshTasks := MVRTypes.MeshTasks{}
+		parsedData.CreateMeshTasks(&meshTasks, config.ModelConfig)
+		fmt.Println(len(meshTasks))
 
-		// write mesh as STL
-		f, _ := os.Create("Test.stl")
-		STL.WriteBinary(f, mesh)
-		f.Close()
+		parsedData.StageModel = MVRTypes.CompleteMeshTasks(&meshTasks, config)
 	}
 
 	return parsedData, nil

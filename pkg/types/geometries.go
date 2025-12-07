@@ -13,8 +13,8 @@ type Geometries struct {
 	Symbol     []*Symbol
 }
 
-func (a *Geometries) ResolveReference() {
-	ResolveReferences(&a.Symbol)
+func (a *Geometries) ResolveReference(refPointers *ReferencePointers) {
+	ResolveReferences(refPointers, &a.Symbol)
 }
 
 type Geometry3D struct {
@@ -29,7 +29,7 @@ type Symbol struct {
 	Matrix MeshTypes.Matrix
 }
 
-func (a *Symbol) ResolveReference() {
+func (a *Symbol) ResolveReference(refPointers *ReferencePointers) {
 	if a.SymDef.String != nil {
 		a.SymDef.Ptr = refPointers.SymDefs[*a.SymDef.String]
 	}
@@ -60,30 +60,4 @@ func (a *Geometry3D) ReadMesh(fileMap map[string]*zip.File) error {
 		a.Mesh = mesh
 	}
 	return nil
-}
-
-func (a *Geometries) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTypes.Mesh {
-	newMesh := &MeshTypes.Mesh{}
-	for _, element := range a.Geometry3D {
-		temp := GenerateMesh(parentTransformation, element.Matrix, element.Mesh)
-		// temp, err := GenerateMesh(parentTransformation, element.Matrix, element.Mesh)
-		// if err != nil {
-		// 	return err
-		// }
-		newMesh.Add(temp)
-	}
-	for _, element := range a.Symbol {
-		matrix := parentTransformation.Mul(element.Matrix)
-		temp := element.GenerateMesh(matrix)
-		newMesh.Add(temp)
-	}
-	return newMesh
-}
-
-func (a *Symbol) GenerateMesh(parentTransformation MeshTypes.Matrix) *MeshTypes.Mesh {
-	if a.SymDef.Ptr != nil {
-		matrix := parentTransformation.Mul(a.Matrix)
-		return a.SymDef.Ptr.Geometries.GenerateMesh(matrix)
-	}
-	return &MeshTypes.Mesh{}
 }

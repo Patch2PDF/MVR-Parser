@@ -29,19 +29,19 @@ type SceneObject struct {
 	ChildList
 }
 
-func (a *SceneObject) CreateReferencePointer() {
-	a.ChildList.CreateReferencePointer()
+func (a *SceneObject) CreateReferencePointer(refPointers *ReferencePointers) {
+	a.ChildList.CreateReferencePointer(refPointers)
 }
 
-func (a *SceneObject) ResolveReference() {
+func (a *SceneObject) ResolveReference(refPointers *ReferencePointers) {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
 	if a.GDTFSpec.String != nil {
 		a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
 	}
-	a.Geometries.ResolveReference()
-	a.ChildList.ResolveReference()
+	a.Geometries.ResolveReference(refPointers)
+	a.ChildList.ResolveReference(refPointers)
 }
 
 func (a *SceneObject) ReadMesh(fileMap map[string]*zip.File) error {

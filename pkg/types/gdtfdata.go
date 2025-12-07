@@ -6,6 +6,7 @@ import (
 )
 
 type GDTF struct {
+	Name   string
 	Data   *GDTFTypes.GDTF
 	Meshes map[string]*MeshTypes.Mesh
 }

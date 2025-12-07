@@ -13,15 +13,15 @@ type ChildList struct {
 	Projectors   []*Projector   `xml:"ChildList>Projector,omitempty"`
 }
 
-func (a *ChildList) Parse() MVRTypes.ChildList {
+func (a *ChildList) Parse(config ParseConfigData) MVRTypes.ChildList {
 	return MVRTypes.ChildList{
-		SceneObjects: ParseList(&a.SceneObjects),
-		GroupObjects: ParseList(&a.GroupObjects),
-		FocusPoints:  ParseList(&a.FocusPoints),
-		Fixtures:     ParseList(&a.Fixtures),
-		Supports:     ParseList(&a.Supports),
-		Trusses:      ParseList(&a.Trusses),
-		VideoScreens: ParseList(&a.VideoScreens),
-		Projectors:   ParseList(&a.Projectors),
+		SceneObjects: ParseList(config, &a.SceneObjects),
+		GroupObjects: ParseList(config, &a.GroupObjects),
+		FocusPoints:  ParseList(config, &a.FocusPoints),
+		Fixtures:     ParseList(config, &a.Fixtures),
+		Supports:     ParseList(config, &a.Supports),
+		Trusses:      ParseList(config, &a.Trusses),
+		VideoScreens: ParseList(config, &a.VideoScreens),
+		Projectors:   ParseList(config, &a.Projectors),
 	}
 }

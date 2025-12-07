@@ -3,6 +3,7 @@ package MVRXML
 import (
 	"strconv"
 
+	GDTFReader "github.com/Patch2PDF/MVR-Parser/internal/gdtfreader"
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 )
 
@@ -32,7 +33,7 @@ type Support struct {
 	ChildList
 }
 
-func (a *Support) Parse() *MVRTypes.Support {
+func (a *Support) Parse(config ParseConfigData) *MVRTypes.Support {
 	fixtureIDNumeric := a.FixtureIDNumeric
 	if a.FixtureIDNumeric == 0 {
 		value, err := strconv.ParseInt(a.FixtureID, 10, 0)
@@ -41,6 +42,7 @@ func (a *Support) Parse() *MVRTypes.Support {
 		}
 		fixtureIDNumeric = int(value)
 	}
+	GDTFReader.AddToTaskMap(config.GDTFTaskMap, a.GDTFSpec, a.GDTFMode)
 	return &MVRTypes.Support{
 		UUID:             a.UUID,
 		Name:             a.Name,
@@ -55,15 +57,15 @@ func (a *Support) Parse() *MVRTypes.Support {
 		FixtureID:        a.FixtureID,
 		FixtureIDNumeric: fixtureIDNumeric,
 		UnitNumber:       a.UnitNumber,
-		Addresses:        a.Addresses.Parse(),
-		Alignments:       ParseList(&a.Alignments),
-		CustomCommands:   ParseList(&a.CustomCommands),
-		Overwrites:       ParseList(&a.Overwrites),
-		Connections:      ParseList(&a.Connections),
+		Addresses:        a.Addresses.Parse(config),
+		Alignments:       ParseList(config, &a.Alignments),
+		CustomCommands:   ParseList(config, &a.CustomCommands),
+		Overwrites:       ParseList(config, &a.Overwrites),
+		Connections:      ParseList(config, &a.Connections),
 		CustomId:         a.CustomId,
 		CustomIdType:     a.CustomIdType,
-		ChildList:        a.ChildList.Parse(),
-		Geometries:       a.Geometries.Parse(),
+		ChildList:        a.ChildList.Parse(config),
+		Geometries:       a.Geometries.Parse(config),
 		ChainLength:      a.ChainLength,
 	}
 }

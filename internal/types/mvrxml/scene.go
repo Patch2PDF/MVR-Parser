@@ -7,10 +7,10 @@ type Scene struct {
 	Layers  []*Layer `xml:"Layers>Layer"`
 }
 
-func (s *Scene) Parse() *MVRTypes.Scene {
+func (s *Scene) Parse(config ParseConfigData) *MVRTypes.Scene {
 	return &MVRTypes.Scene{
-		AuxData: s.AuxData.Parse(),
-		Layers:  ParseList(&s.Layers),
+		AuxData: s.AuxData.Parse(config),
+		Layers:  ParseList(config, &s.Layers),
 	}
 }
 
@@ -21,12 +21,12 @@ type AuxData struct {
 	Classes            []*Class             `xml:"Class"`
 }
 
-func (a *AuxData) Parse() *MVRTypes.AuxData {
+func (a *AuxData) Parse(config ParseConfigData) *MVRTypes.AuxData {
 	return &MVRTypes.AuxData{
-		SymDefs:            ParseList(&a.SymDefs),
-		Positions:          ParseList(&a.Positions),
-		MappingDefinitions: ParseList(&a.MappingDefinitions),
-		Classes:            ParseList(&a.Classes),
+		SymDefs:            ParseList(config, &a.SymDefs),
+		Positions:          ParseList(config, &a.Positions),
+		MappingDefinitions: ParseList(config, &a.MappingDefinitions),
+		Classes:            ParseList(config, &a.Classes),
 	}
 }
 
@@ -36,11 +36,11 @@ type SymDef struct {
 	Geometries Geometries `xml:"ChildList"`
 }
 
-func (a *SymDef) Parse() *MVRTypes.SymDef {
+func (a *SymDef) Parse(config ParseConfigData) *MVRTypes.SymDef {
 	return &MVRTypes.SymDef{
 		UUID:       a.UUID,
 		Name:       a.Name,
-		Geometries: a.Geometries.Parse(),
+		Geometries: a.Geometries.Parse(config),
 	}
 }
 
@@ -49,7 +49,7 @@ type Position struct {
 	Name string `xml:"name,attr"`
 }
 
-func (a *Position) Parse() *MVRTypes.Position {
+func (a *Position) Parse(config ParseConfigData) *MVRTypes.Position {
 	return &MVRTypes.Position{
 		UUID: a.UUID,
 		Name: a.Name,
@@ -65,7 +65,7 @@ type MappingDefinition struct {
 	ScaleHandeling *string `xml:"ScaleHandeling"` // ScaleKeepRatio or ScaleIgnoreRatio or KeepSizeCenter
 }
 
-func (a *MappingDefinition) Parse() *MVRTypes.MappingDefinition {
+func (a *MappingDefinition) Parse(config ParseConfigData) *MVRTypes.MappingDefinition {
 	return &MVRTypes.MappingDefinition{
 		UUID:           a.UUID,
 		Name:           a.Name,
@@ -81,7 +81,7 @@ type Class struct {
 	Name string `xml:"name,attr"`
 }
 
-func (a *Class) Parse() *MVRTypes.Class {
+func (a *Class) Parse(config ParseConfigData) *MVRTypes.Class {
 	return &MVRTypes.Class{
 		UUID: a.UUID,
 		Name: a.Name,
@@ -95,11 +95,11 @@ type Layer struct {
 	ChildList
 }
 
-func (a *Layer) Parse() *MVRTypes.Layer {
+func (a *Layer) Parse(config ParseConfigData) *MVRTypes.Layer {
 	return &MVRTypes.Layer{
 		UUID:      a.UUID,
 		Name:      a.Name,
 		Matrix:    a.Matrix.ToMeshMatrix(),
-		ChildList: a.ChildList.Parse(),
+		ChildList: a.ChildList.Parse(config),
 	}
 }
