@@ -38,11 +38,11 @@ type Fixture struct {
 	ChildList
 }
 
-func (a *Fixture) CreateReferencePointer() {
-	a.ChildList.CreateReferencePointer()
+func (a *Fixture) CreateReferencePointer(refPointers *ReferencePointers) {
+	a.ChildList.CreateReferencePointer(refPointers)
 }
 
-func (a *Fixture) ResolveReference() {
+func (a *Fixture) ResolveReference(refPointers *ReferencePointers) {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
@@ -55,7 +55,7 @@ func (a *Fixture) ResolveReference() {
 	if a.Focus.String != nil {
 		a.Focus.Ptr = refPointers.FoucsPoints[*a.Focus.String]
 	}
-	ResolveReferences(&a.Mappings)
+	ResolveReferences(refPointers, &a.Mappings)
 }
 
 func (a *Fixture) ReadMesh(fileMap map[string]*zip.File) error {
@@ -83,6 +83,6 @@ type Mapping struct {
 	Rz        float32
 }
 
-func (a *Mapping) ResolveReference() {
+func (a *Mapping) ResolveReference(refPointers *ReferencePointers) {
 	a.LinkedDef.Ptr = refPointers.MappingDefinitions[*a.LinkedDef.String]
 }

@@ -12,10 +12,10 @@ type GeneralSceneDescription struct {
 	StageModel      *MeshTypes.Mesh
 }
 
-func (a *GeneralSceneDescription) CreateReferencePointer() {
-	a.Scene.CreateReferencePointer()
+func (a *GeneralSceneDescription) CreateReferencePointer(refPointers *ReferencePointers) {
+	a.Scene.CreateReferencePointer(refPointers)
 }
 
-func (a *GeneralSceneDescription) ResolveReference() {
-	a.Scene.ResolveReference()
+func (a *GeneralSceneDescription) ResolveReference(refPointers *ReferencePointers) {
+	a.Scene.ResolveReference(refPointers)
 }

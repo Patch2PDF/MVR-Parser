@@ -14,15 +14,15 @@ type FocusPoint struct {
 	Geometries *Geometries
 }
 
-func (a *FocusPoint) CreateReferencePointer() {
+func (a *FocusPoint) CreateReferencePointer(refPointers *ReferencePointers) {
 	refPointers.FoucsPoints[a.UUID] = a
 }
 
-func (a *FocusPoint) ResolveReference() {
+func (a *FocusPoint) ResolveReference(refPointers *ReferencePointers) {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
-	a.Geometries.ResolveReference()
+	a.Geometries.ResolveReference(refPointers)
 }
 
 func (a *FocusPoint) ReadMesh(fileMap map[string]*zip.File) error {

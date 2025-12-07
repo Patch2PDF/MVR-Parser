@@ -31,19 +31,19 @@ type VideoScreen struct {
 	ChildList
 }
 
-func (a *VideoScreen) CreateReferencePointer() {
-	a.ChildList.CreateReferencePointer()
+func (a *VideoScreen) CreateReferencePointer(refPointers *ReferencePointers) {
+	a.ChildList.CreateReferencePointer(refPointers)
 }
 
-func (a *VideoScreen) ResolveReference() {
+func (a *VideoScreen) ResolveReference(refPointers *ReferencePointers) {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
 	if a.GDTFSpec.String != nil {
 		a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
 	}
-	a.Geometries.ResolveReference()
-	a.ChildList.ResolveReference()
+	a.Geometries.ResolveReference(refPointers)
+	a.ChildList.ResolveReference(refPointers)
 }
 
 func (a *VideoScreen) ReadMesh(fileMap map[string]*zip.File) error {
@@ -79,19 +79,19 @@ type Projector struct {
 	ChildList
 }
 
-func (a *Projector) CreateReferencePointer() {
-	a.ChildList.CreateReferencePointer()
+func (a *Projector) CreateReferencePointer(refPointers *ReferencePointers) {
+	a.ChildList.CreateReferencePointer(refPointers)
 }
 
-func (a *Projector) ResolveReference() {
+func (a *Projector) ResolveReference(refPointers *ReferencePointers) {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
 	if a.GDTFSpec.String != nil {
 		a.GDTFSpec.Ptr = refPointers.GDTFSpecs[*a.GDTFSpec.String]
 	}
-	a.Geometries.ResolveReference()
-	a.ChildList.ResolveReference()
+	a.Geometries.ResolveReference(refPointers)
+	a.ChildList.ResolveReference(refPointers)
 }
 
 func (a *Projector) ReadMesh(fileMap map[string]*zip.File) error {

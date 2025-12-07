@@ -43,11 +43,13 @@ func ParseMVRZipReader(zipfile *zip.Reader, config MVRTypes.MVRParserConfig) (*M
 
 	parsedData := mvrData.Parse(parseConfig)
 
-	GDTFReader.GetGDTFs(parseConfig.GDTFTaskMap, fileMap, config)
+	refPointers := MVRTypes.CreateRefPointersMap()
 
-	parsedData.CreateReferencePointer()
+	GDTFReader.GetGDTFs(parseConfig.GDTFTaskMap, refPointers, fileMap, config)
 
-	parsedData.ResolveReference()
+	parsedData.CreateReferencePointer(refPointers)
+
+	parsedData.ResolveReference(refPointers)
 
 	if config.MeshHandling >= MVRTypes.ReadMeshesIntoModels {
 		geometry3d.ReadMeshes(fileMap, parsedData)

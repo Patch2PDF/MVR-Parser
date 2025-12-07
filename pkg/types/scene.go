@@ -11,13 +11,13 @@ type Scene struct {
 	Layers  []*Layer
 }
 
-func (a *Scene) CreateReferencePointer() {
-	a.AuxData.CreateReferencePointer()
-	CreateReferencePointers(&a.Layers)
+func (a *Scene) CreateReferencePointer(refPointers *ReferencePointers) {
+	a.AuxData.CreateReferencePointer(refPointers)
+	CreateReferencePointers(refPointers, &a.Layers)
 }
 
-func (a *Scene) ResolveReference() {
-	ResolveReferences(&a.Layers)
+func (a *Scene) ResolveReference(refPointers *ReferencePointers) {
+	ResolveReferences(refPointers, &a.Layers)
 }
 
 // auxiliary data for the scene node
@@ -28,11 +28,11 @@ type AuxData struct {
 	Classes            []*Class
 }
 
-func (a *AuxData) CreateReferencePointer() {
-	CreateReferencePointers(&a.SymDefs)
-	CreateReferencePointers(&a.Positions)
-	CreateReferencePointers(&a.MappingDefinitions)
-	CreateReferencePointers(&a.Classes)
+func (a *AuxData) CreateReferencePointer(refPointers *ReferencePointers) {
+	CreateReferencePointers(refPointers, &a.SymDefs)
+	CreateReferencePointers(refPointers, &a.Positions)
+	CreateReferencePointers(refPointers, &a.MappingDefinitions)
+	CreateReferencePointers(refPointers, &a.Classes)
 }
 
 func (a *AuxData) ReadMesh(fileMap map[string]*zip.File) error {
@@ -46,12 +46,12 @@ type SymDef struct {
 	Geometries *Geometries
 }
 
-func (a *SymDef) CreateReferencePointer() {
+func (a *SymDef) CreateReferencePointer(refPointers *ReferencePointers) {
 	refPointers.SymDefs[a.UUID] = a
 }
 
-func (a *SymDef) ResolveReference() {
-	a.Geometries.ResolveReference()
+func (a *SymDef) ResolveReference(refPointers *ReferencePointers) {
+	a.Geometries.ResolveReference(refPointers)
 }
 
 func (a *SymDef) ReadMesh(fileMap map[string]*zip.File) error {
@@ -64,7 +64,7 @@ type Position struct {
 	Name string
 }
 
-func (a *Position) CreateReferencePointer() {
+func (a *Position) CreateReferencePointer(refPointers *ReferencePointers) {
 	refPointers.Positions[a.UUID] = a
 }
 
@@ -78,7 +78,7 @@ type MappingDefinition struct {
 	ScaleHandeling *string // ScaleKeepRatio or ScaleIgnoreRatio or KeepSizeCenter
 }
 
-func (a *MappingDefinition) CreateReferencePointer() {
+func (a *MappingDefinition) CreateReferencePointer(refPointers *ReferencePointers) {
 	refPointers.MappingDefinitions[a.UUID] = a
 }
 
@@ -88,7 +88,7 @@ type Class struct {
 	Name string
 }
 
-func (a *Class) CreateReferencePointer() {
+func (a *Class) CreateReferencePointer(refPointers *ReferencePointers) {
 	refPointers.Classes[a.UUID] = a
 }
 
@@ -100,10 +100,10 @@ type Layer struct {
 	ChildList
 }
 
-func (a *Layer) CreateReferencePointer() {
-	a.ChildList.CreateReferencePointer()
+func (a *Layer) CreateReferencePointer(refPointers *ReferencePointers) {
+	a.ChildList.CreateReferencePointer(refPointers)
 }
 
-func (a *Layer) ResolveReference() {
-	a.ChildList.ResolveReference()
+func (a *Layer) ResolveReference(refPointers *ReferencePointers) {
+	a.ChildList.ResolveReference(refPointers)
 }

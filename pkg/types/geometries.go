@@ -13,8 +13,8 @@ type Geometries struct {
 	Symbol     []*Symbol
 }
 
-func (a *Geometries) ResolveReference() {
-	ResolveReferences(&a.Symbol)
+func (a *Geometries) ResolveReference(refPointers *ReferencePointers) {
+	ResolveReferences(refPointers, &a.Symbol)
 }
 
 type Geometry3D struct {
@@ -29,7 +29,7 @@ type Symbol struct {
 	Matrix MeshTypes.Matrix
 }
 
-func (a *Symbol) ResolveReference() {
+func (a *Symbol) ResolveReference(refPointers *ReferencePointers) {
 	if a.SymDef.String != nil {
 		a.SymDef.Ptr = refPointers.SymDefs[*a.SymDef.String]
 	}

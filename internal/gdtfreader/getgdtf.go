@@ -62,7 +62,7 @@ func getGDTF(jobs <-chan *GDTFTask, results chan<- *MVRTypes.GDTF, fileMap map[s
 	return nil
 }
 
-func GetGDTFs(gdtfTaskMap *map[string]*GDTFTask, fileMap map[string]*zip.File, config MVRTypes.MVRParserConfig) error {
+func GetGDTFs(gdtfTaskMap *map[string]*GDTFTask, refPointers *MVRTypes.ReferencePointers, fileMap map[string]*zip.File, config MVRTypes.MVRParserConfig) error {
 	eg := errgroup.Group{}
 
 	var numWorkers = config.GDTFParserWorkers
@@ -88,7 +88,7 @@ func GetGDTFs(gdtfTaskMap *map[string]*GDTFTask, fileMap map[string]*zip.File, c
 	close(results)
 
 	for gdtf := range results {
-		MVRTypes.AddGDTFPointer(gdtf.Name, gdtf)
+		refPointers.GDTFSpecs[gdtf.Name] = gdtf
 	}
 
 	return nil

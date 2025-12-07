@@ -32,11 +32,11 @@ type Support struct {
 	ChildList
 }
 
-func (a *Support) CreateReferencePointer() {
-	a.ChildList.CreateReferencePointer()
+func (a *Support) CreateReferencePointer(refPointers *ReferencePointers) {
+	a.ChildList.CreateReferencePointer(refPointers)
 }
 
-func (a *Support) ResolveReference() {
+func (a *Support) ResolveReference(refPointers *ReferencePointers) {
 	if a.Class.String != nil {
 		a.Class.Ptr = refPointers.Classes[*a.Class.String]
 	}
@@ -46,8 +46,8 @@ func (a *Support) ResolveReference() {
 	if a.Position.String != nil {
 		a.Position.Ptr = refPointers.Positions[*a.Position.String]
 	}
-	a.Geometries.ResolveReference()
-	a.ChildList.ResolveReference()
+	a.Geometries.ResolveReference(refPointers)
+	a.ChildList.ResolveReference(refPointers)
 }
 
 func (a *Support) ReadMesh(fileMap map[string]*zip.File) error {

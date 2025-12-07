@@ -13,26 +13,26 @@ type ChildList struct {
 	Projectors   []*Projector
 }
 
-func (c *ChildList) CreateReferencePointer() {
-	CreateReferencePointers(&c.SceneObjects)
-	CreateReferencePointers(&c.GroupObjects)
-	CreateReferencePointers(&c.FocusPoints)
-	CreateReferencePointers(&c.Fixtures)
-	CreateReferencePointers(&c.Supports)
-	CreateReferencePointers(&c.Trusses)
-	CreateReferencePointers(&c.VideoScreens)
-	CreateReferencePointers(&c.Projectors)
+func (c *ChildList) CreateReferencePointer(refPointers *ReferencePointers) {
+	CreateReferencePointers(refPointers, &c.SceneObjects)
+	CreateReferencePointers(refPointers, &c.GroupObjects)
+	CreateReferencePointers(refPointers, &c.FocusPoints)
+	CreateReferencePointers(refPointers, &c.Fixtures)
+	CreateReferencePointers(refPointers, &c.Supports)
+	CreateReferencePointers(refPointers, &c.Trusses)
+	CreateReferencePointers(refPointers, &c.VideoScreens)
+	CreateReferencePointers(refPointers, &c.Projectors)
 }
 
-func (c *ChildList) ResolveReference() {
-	ResolveReferences(&c.SceneObjects)
-	ResolveReferences(&c.GroupObjects)
-	ResolveReferences(&c.FocusPoints)
-	ResolveReferences(&c.Fixtures)
-	ResolveReferences(&c.Supports)
-	ResolveReferences(&c.Trusses)
-	ResolveReferences(&c.VideoScreens)
-	ResolveReferences(&c.Projectors)
+func (c *ChildList) ResolveReference(refPointers *ReferencePointers) {
+	ResolveReferences(refPointers, &c.SceneObjects)
+	ResolveReferences(refPointers, &c.GroupObjects)
+	ResolveReferences(refPointers, &c.FocusPoints)
+	ResolveReferences(refPointers, &c.Fixtures)
+	ResolveReferences(refPointers, &c.Supports)
+	ResolveReferences(refPointers, &c.Trusses)
+	ResolveReferences(refPointers, &c.VideoScreens)
+	ResolveReferences(refPointers, &c.Projectors)
 }
 
 func (c *ChildList) ReadMesh(fileMap map[string]*zip.File) error {
