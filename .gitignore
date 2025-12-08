@@ -1,0 +1,12 @@
+.DS_Store
+*.stl
+
+# build file
+MVR-Parser
+
+# for now exclude all test mvr's
+*.mvr
+
+# example binary and cpu profiler
+examples/examples
+cpu.prof
