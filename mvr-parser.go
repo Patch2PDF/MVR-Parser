@@ -12,10 +12,13 @@ import (
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 )
 
+// Takes a `.mvr` file zip reader and parses it, according to the given config
+//
+// may contain an entire mesh model of the stage, if configured as such
 func ParseMVRZipReader(zipfile *zip.Reader, config MVRTypes.MVRParserConfig) (*MVRTypes.GeneralSceneDescription, error) {
 	var mvrData MVRXML.GeneralSceneDescription
 
-	// TODO: docs + tests + readme
+	// TODO: docs + tests
 
 	// put all files in zip into the filemap
 	var fileMap map[string]*zip.File = make(map[string]*zip.File)
