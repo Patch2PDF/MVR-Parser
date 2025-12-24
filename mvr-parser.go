@@ -27,6 +27,9 @@ func ParseMVRZipReader(zipfile *zip.Reader, config MVRTypes.MVRParserConfig) (*M
 	}
 
 	// parse mvr xml
+	if fileMap["GeneralSceneDescription.xml"] == nil {
+		return nil, fmt.Errorf("Invalid MVR: missing GeneralSceneDescription.xml")
+	}
 	xmlFile, err := fileMap["GeneralSceneDescription.xml"].Open()
 	if err != nil {
 		return nil, err
