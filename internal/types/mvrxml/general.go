@@ -158,7 +158,7 @@ type ConvertToDestinationMapStruct[T any] interface {
 
 func ParseList[Source ConvertToDestinationStruct[Destination], Destination any](config ParseConfigData, source *[]Source) []Destination {
 	if source == nil {
-		return nil
+		return []Destination{}
 	}
 	var destination []Destination = make([]Destination, len(*source))
 	for index, element := range *source {
@@ -169,6 +169,9 @@ func ParseList[Source ConvertToDestinationStruct[Destination], Destination any](
 }
 
 func ParseMap[Source ConvertToDestinationMapStruct[Destination], Destination any](config ParseConfigData, source *[]Source) map[string]*Destination {
+	if source == nil {
+		return map[string]*Destination{}
+	}
 	destination := make(map[string]*Destination)
 	for _, element := range *source {
 		parsedElement := element.Parse(config)
