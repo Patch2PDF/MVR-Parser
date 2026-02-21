@@ -4,8 +4,8 @@ import (
 	"archive/zip"
 	"path"
 
-	GDTFMeshReader "github.com/Patch2PDF/GDTF-Mesh-Reader"
-	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+	GDTFMeshReader "github.com/Patch2PDF/GDTF-Mesh-Reader/v2"
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 )
 
 type Geometries struct {
