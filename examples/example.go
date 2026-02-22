@@ -26,8 +26,8 @@ var config = MVRTypes.MVRParserConfig{
 		},
 		Individual: map[string]MVRTypes.ModelNodeConfig{
 			"FA992217-CB18-D844-9D42-5B791B2BF05E": {
-				Exclude:                    &MVRTypes.FalsePtr,
-				RenderOnlyAddressedFixture: &MVRTypes.TruePtr,
+				Exclude:                    MVRTypes.GetBoolPtr(false),
+				RenderOnlyAddressedFixture: MVRTypes.GetBoolPtr(true),
 			},
 		},
 	},
