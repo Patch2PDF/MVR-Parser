@@ -63,10 +63,7 @@ func ParseMVRZipReader(zipfile *zip.Reader, config MVRTypes.MVRParserConfig) (*M
 
 	if config.MeshHandling >= MVRTypes.BuildStageModel {
 		meshTasks := MVRTypes.MeshTasks{}
-		parsedData.CreateMeshTasks(&meshTasks, config.ModelConfig)
-		fmt.Println(len(meshTasks))
-
-		parsedData.StageModel = MVRTypes.CompleteMeshTasks(&meshTasks, config)
+		parsedData.GenerateMeshes(&meshTasks, config.ModelConfig)
 	}
 
 	return parsedData, nil

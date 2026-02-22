@@ -9,13 +9,14 @@ type GlobalModelConfig struct {
 	RenderOnlyAddressedFixture bool
 }
 
-var FalsePtr = false
-var TruePtr = true
+func GetBoolPtr(value bool) *bool {
+	return &value
+}
 
 func (a GlobalModelConfig) asNodeConfig() ModelNodeConfig {
 	return ModelNodeConfig{
 		RenderOnlyAddressedFixture: &a.RenderOnlyAddressedFixture,
-		Exclude:                    &FalsePtr,
+		Exclude:                    GetBoolPtr(false),
 	}
 }
 

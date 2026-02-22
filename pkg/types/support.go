@@ -3,7 +3,7 @@ package MVRTypes
 import (
 	"archive/zip"
 
-	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 )
 
 type Support struct {

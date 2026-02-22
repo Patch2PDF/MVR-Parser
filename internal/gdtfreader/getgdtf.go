@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"strings"
 
-	"github.com/Patch2PDF/GDTF-Mesh-Reader/pkg/MeshTypes"
 	GDTFParser "github.com/Patch2PDF/GDTF-Parser"
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
 	"golang.org/x/sync/errgroup"
@@ -43,20 +42,17 @@ func getGDTF(jobs <-chan *GDTFTask, results chan<- *MVRTypes.GDTF, fileMap map[s
 		if err != nil {
 			return err
 		}
-		meshes := map[string]*MeshTypes.Mesh{}
 		for gdtfMode := range task.GDTFModes {
-			if config.MeshHandling >= MVRTypes.BuildFixtureModels {
-				mesh, err := gdtf.BuildMesh(gdtfMode)
+			if config.MeshHandling >= MVRTypes.BuildFixtureModels && gdtf.FixtureType.DMXModes[gdtfMode].MeshModels == nil {
+				_, err := gdtf.BuildMesh(gdtfMode)
 				if err != nil {
 					return err
 				}
-				meshes[gdtfMode] = mesh
 			}
 		}
 		results <- &MVRTypes.GDTF{
-			Name:   task.GDTFSpec,
-			Data:   gdtf,
-			Meshes: meshes,
+			Name: task.GDTFSpec,
+			Data: gdtf,
 		}
 	}
 	return nil
