@@ -8,7 +8,8 @@ import (
 	"runtime/pprof"
 	"time"
 
-	GDTFMeshReader "github.com/Patch2PDF/GDTF-Mesh-Reader"
+	GDTFMeshReader "github.com/Patch2PDF/GDTF-Mesh-Reader/v2"
+	"github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 	STL "github.com/Patch2PDF/GDTF-Parser/examples/stl"
 	MVRParser "github.com/Patch2PDF/MVR-Parser"
 	MVRTypes "github.com/Patch2PDF/MVR-Parser/pkg/types"
@@ -56,6 +57,20 @@ func main() {
 
 	// write mesh as STL
 	meshFile, _ := os.Create("Test.stl")
-	STL.WriteBinary(meshFile, mvrData.StageModel)
+	mesh := &MeshTypes.Mesh{}
+	for _, fixture := range mvrData.StageModel.FixtureModels {
+		for _, part := range fixture.MeshModel {
+			mesh.Add(&part.Mesh)
+		}
+	}
+	for _, sceneObject := range mvrData.StageModel.SceneObjectModels {
+		for _, part := range sceneObject.MeshModel {
+			mesh.Add(&part.Mesh)
+		}
+		for _, geometry := range sceneObject.Geometries {
+			mesh.Add(&geometry)
+		}
+	}
+	STL.WriteBinary(meshFile, mesh)
 	f.Close()
 }
