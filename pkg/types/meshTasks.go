@@ -89,18 +89,20 @@ func (obj *SceneObject) GenerateMesh(meshTasks *MeshTasks, stageModel *StageMode
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
+
+	model := SceneObjectModel{
+		SceneObject:          obj,
+		TransformationMatrix: matrix,
+	}
+
 	if obj.GDTFSpec.Ptr != nil {
-		model := SceneObjectModel{
-			SceneObject:          obj,
-			TransformationMatrix: matrix,
-			MeshModel:            make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels)),
-		}
+		model.MeshModel = make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels))
+
 		for _, part := range obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels {
 			copy := part.Copy()
 			copy.Mesh.RotateAndTranslate(matrix)
 			model.MeshModel = append(model.MeshModel, copy)
 		}
-		stageModel.SceneObjectModels = append(stageModel.SceneObjectModels, model)
 	}
 
 	parentConf := ParentMeshConfig{
@@ -108,7 +110,9 @@ func (obj *SceneObject) GenerateMesh(meshTasks *MeshTasks, stageModel *StageMode
 		ModelConfig:    config,
 	}
 
-	obj.Geometries.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
+	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, parentConf)
+
+	stageModel.SceneObjectModels = append(stageModel.SceneObjectModels, model)
 
 	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, ParentMeshConfig{
 		Transformation: matrix,
@@ -124,10 +128,18 @@ func (obj *FocusPoint) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
-	obj.Geometries.GenerateMesh(meshTasks, stageModel, modelConfig, ParentMeshConfig{
+
+	model := FocusPointModel{
+		FocusPoint:           obj,
+		TransformationMatrix: matrix,
+	}
+
+	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, ParentMeshConfig{
 		Transformation: matrix,
 		ModelConfig:    config,
 	})
+
+	stageModel.FocusPointModels = append(stageModel.FocusPointModels, model)
 }
 
 func (obj *Fixture) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
@@ -141,19 +153,23 @@ func (obj *Fixture) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, m
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
+
+	model := FixtureModel{
+		Fixture:              obj,
+		TransformationMatrix: matrix,
+	}
+
 	if obj.GDTFSpec.Ptr != nil {
-		model := FixtureModel{
-			Fixture:              obj,
-			TransformationMatrix: matrix,
-			MeshModel:            make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels)),
-		}
+		model.MeshModel = make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels))
+
 		for _, part := range obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels {
 			copy := part.Copy()
 			copy.Mesh.RotateAndTranslate(matrix)
 			model.MeshModel = append(model.MeshModel, copy)
 		}
-		stageModel.FixtureModels = append(stageModel.FixtureModels, model)
 	}
+
+	stageModel.FixtureModels = append(stageModel.FixtureModels, model)
 
 	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, ParentMeshConfig{
 		Transformation: matrix,
@@ -169,18 +185,20 @@ func (obj *Support) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, m
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
+
+	model := SupportModel{
+		Support:              obj,
+		TransformationMatrix: matrix,
+	}
+
 	if obj.GDTFSpec.Ptr != nil {
-		model := SupportModel{
-			Support:              obj,
-			TransformationMatrix: matrix,
-			MeshModel:            make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels)),
-		}
+		model.MeshModel = make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels))
+
 		for _, part := range obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels {
 			copy := part.Copy()
 			copy.Mesh.RotateAndTranslate(matrix)
 			model.MeshModel = append(model.MeshModel, copy)
 		}
-		stageModel.SupportModels = append(stageModel.SupportModels, model)
 	}
 
 	parentConf := ParentMeshConfig{
@@ -188,7 +206,9 @@ func (obj *Support) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, m
 		ModelConfig:    config,
 	}
 
-	obj.Geometries.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
+	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, parentConf)
+
+	stageModel.SupportModels = append(stageModel.SupportModels, model)
 
 	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
 }
@@ -201,18 +221,20 @@ func (obj *Truss) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, mod
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
+
+	model := TrussModel{
+		Truss:                obj,
+		TransformationMatrix: matrix,
+	}
+
 	if obj.GDTFSpec.Ptr != nil {
-		model := TrussModel{
-			Truss:                obj,
-			TransformationMatrix: matrix,
-			MeshModel:            make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels)),
-		}
+		model.MeshModel = make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels))
+
 		for _, part := range obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels {
 			copy := part.Copy()
 			copy.Mesh.RotateAndTranslate(matrix)
 			model.MeshModel = append(model.MeshModel, copy)
 		}
-		stageModel.TrussModels = append(stageModel.TrussModels, model)
 	}
 
 	parentConf := ParentMeshConfig{
@@ -220,7 +242,9 @@ func (obj *Truss) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, mod
 		ModelConfig:    config,
 	}
 
-	obj.Geometries.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
+	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, parentConf)
+
+	stageModel.TrussModels = append(stageModel.TrussModels, model)
 
 	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
 }
@@ -233,18 +257,20 @@ func (obj *VideoScreen) GenerateMesh(meshTasks *MeshTasks, stageModel *StageMode
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
+
+	model := VideoScreenModel{
+		VideoScreen:          obj,
+		TransformationMatrix: matrix,
+	}
+
 	if obj.GDTFSpec.Ptr != nil {
-		model := VideoScreenModel{
-			VideoScreen:          obj,
-			TransformationMatrix: matrix,
-			MeshModel:            make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels)),
-		}
+		model.MeshModel = make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels))
+
 		for _, part := range obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels {
 			copy := part.Copy()
 			copy.Mesh.RotateAndTranslate(matrix)
 			model.MeshModel = append(model.MeshModel, copy)
 		}
-		stageModel.VideoScreenModels = append(stageModel.VideoScreenModels, model)
 	}
 
 	parentConf := ParentMeshConfig{
@@ -252,7 +278,9 @@ func (obj *VideoScreen) GenerateMesh(meshTasks *MeshTasks, stageModel *StageMode
 		ModelConfig:    config,
 	}
 
-	obj.Geometries.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
+	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, parentConf)
+
+	stageModel.VideoScreenModels = append(stageModel.VideoScreenModels, model)
 
 	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
 }
@@ -265,18 +293,20 @@ func (obj *Projector) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel,
 	}
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
+
+	model := ProjectorModel{
+		Projector:            obj,
+		TransformationMatrix: matrix,
+	}
+
 	if obj.GDTFSpec.Ptr != nil {
-		model := ProjectorModel{
-			Projector:            obj,
-			TransformationMatrix: matrix,
-			MeshModel:            make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels)),
-		}
+		model.MeshModel = make([]GDTFTypes.MeshModel, 0, len(obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels))
+
 		for _, part := range obj.GDTFSpec.Ptr.Data.FixtureType.DMXModes[obj.GDTFMode].MeshModels {
 			copy := part.Copy()
 			copy.Mesh.RotateAndTranslate(matrix)
 			model.MeshModel = append(model.MeshModel, copy)
 		}
-		stageModel.ProjectorModels = append(stageModel.ProjectorModels, model)
 	}
 
 	parentConf := ParentMeshConfig{
@@ -284,40 +314,47 @@ func (obj *Projector) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel,
 		ModelConfig:    config,
 	}
 
-	obj.Geometries.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
+	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, parentConf)
+
+	stageModel.ProjectorModels = append(stageModel.ProjectorModels, model)
 
 	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
 }
 
-func (obj *Geometries) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
+func (obj *Geometries) GenerateMeshes(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) []MeshTypes.Mesh {
+	meshes := make([]MeshTypes.Mesh, 0, len(obj.Geometry3D)) // allocate atleast amount of Geometry3D's, count of Symbol Meshes is unknown
 	for _, element := range obj.Geometry3D {
 		matrix := parentMeshConfig.Transformation.Mul(element.Matrix)
-		*meshTasks = append(*meshTasks, MeshTransformationTask{
-			Matrix: matrix,
-			Mesh:   element.Mesh,
-		})
+		temp := element.Mesh.Copy()
+		temp.RotateAndTranslate(matrix)
+		meshes = append(meshes, temp)
 	}
 	for _, element := range obj.Symbol {
 		matrix := parentMeshConfig.Transformation.Mul(element.Matrix)
-		element.GenerateMesh(meshTasks, stageModel, modelConfig, ParentMeshConfig{
-			Transformation: matrix,
-			ModelConfig:    parentMeshConfig.ModelConfig,
-		})
+		meshes = append(
+			meshes,
+			element.GenerateMeshes(meshTasks, stageModel, modelConfig, ParentMeshConfig{
+				Transformation: matrix,
+				ModelConfig:    parentMeshConfig.ModelConfig,
+			})...,
+		)
 	}
+	return meshes
 }
 
-func (a *Symbol) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
+func (a *Symbol) GenerateMeshes(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) []MeshTypes.Mesh {
 	config := getConfigOverrides(modelConfig, parentMeshConfig, a.UUID)
 	if config.Exclude != nil && *config.Exclude {
-		return
+		return []MeshTypes.Mesh{}
 	}
 	if a.SymDef.Ptr != nil {
 		matrix := parentMeshConfig.Transformation.Mul(a.Matrix)
-		a.SymDef.Ptr.Geometries.GenerateMesh(meshTasks, stageModel, modelConfig, ParentMeshConfig{
+		return a.SymDef.Ptr.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, ParentMeshConfig{
 			Transformation: matrix,
 			ModelConfig:    config,
 		})
 	}
+	return []MeshTypes.Mesh{}
 }
 
 func meshTaskWorker(jobs <-chan MeshTransformationTask, wg *sync.WaitGroup) {

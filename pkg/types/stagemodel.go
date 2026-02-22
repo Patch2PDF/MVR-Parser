@@ -20,8 +20,17 @@ func CopySlice[Source DeepCopy[Destination], Destination any](source []Source) [
 	return destination
 }
 
+func CopyMeshSlice(source []MeshTypes.Mesh) []MeshTypes.Mesh {
+	slice := make([]MeshTypes.Mesh, 0, len(source))
+	for _, mesh := range source {
+		slice = append(slice, mesh.Copy())
+	}
+	return slice
+}
+
 type StageModel struct {
 	SceneObjectModels []SceneObjectModel
+	FocusPointModels  []FocusPointModel
 	FixtureModels     []FixtureModel
 	SupportModels     []SupportModel
 	TrussModels       []TrussModel
@@ -44,6 +53,7 @@ type SceneObjectModel struct {
 	SceneObject          *SceneObject
 	TransformationMatrix MeshTypes.Matrix
 	MeshModel            []GDTFTypes.MeshModel
+	Geometries           []MeshTypes.Mesh
 }
 
 func (obj SceneObjectModel) Copy() SceneObjectModel {
@@ -51,6 +61,21 @@ func (obj SceneObjectModel) Copy() SceneObjectModel {
 		SceneObject:          obj.SceneObject,
 		TransformationMatrix: obj.TransformationMatrix,
 		MeshModel:            CopySlice(obj.MeshModel),
+		Geometries:           CopyMeshSlice(obj.Geometries),
+	}
+}
+
+type FocusPointModel struct {
+	FocusPoint           *FocusPoint
+	TransformationMatrix MeshTypes.Matrix
+	Geometries           []MeshTypes.Mesh
+}
+
+func (obj FocusPointModel) Copy() FocusPointModel {
+	return FocusPointModel{
+		FocusPoint:           obj.FocusPoint,
+		TransformationMatrix: obj.TransformationMatrix,
+		Geometries:           CopyMeshSlice(obj.Geometries),
 	}
 }
 
@@ -58,6 +83,7 @@ type FixtureModel struct {
 	Fixture              *Fixture
 	TransformationMatrix MeshTypes.Matrix
 	MeshModel            []GDTFTypes.MeshModel
+	Geometries           []MeshTypes.Mesh
 }
 
 func (obj FixtureModel) Copy() FixtureModel {
@@ -65,6 +91,7 @@ func (obj FixtureModel) Copy() FixtureModel {
 		Fixture:              obj.Fixture,
 		TransformationMatrix: obj.TransformationMatrix,
 		MeshModel:            CopySlice(obj.MeshModel),
+		Geometries:           CopyMeshSlice(obj.Geometries),
 	}
 }
 
@@ -72,6 +99,7 @@ type SupportModel struct {
 	Support              *Support
 	TransformationMatrix MeshTypes.Matrix
 	MeshModel            []GDTFTypes.MeshModel
+	Geometries           []MeshTypes.Mesh
 }
 
 func (obj SupportModel) Copy() SupportModel {
@@ -79,6 +107,7 @@ func (obj SupportModel) Copy() SupportModel {
 		Support:              obj.Support,
 		TransformationMatrix: obj.TransformationMatrix,
 		MeshModel:            CopySlice(obj.MeshModel),
+		Geometries:           CopyMeshSlice(obj.Geometries),
 	}
 }
 
@@ -86,6 +115,7 @@ type TrussModel struct {
 	Truss                *Truss
 	TransformationMatrix MeshTypes.Matrix
 	MeshModel            []GDTFTypes.MeshModel
+	Geometries           []MeshTypes.Mesh
 }
 
 func (obj TrussModel) Copy() TrussModel {
@@ -93,6 +123,7 @@ func (obj TrussModel) Copy() TrussModel {
 		Truss:                obj.Truss,
 		TransformationMatrix: obj.TransformationMatrix,
 		MeshModel:            CopySlice(obj.MeshModel),
+		Geometries:           CopyMeshSlice(obj.Geometries),
 	}
 }
 
@@ -100,6 +131,7 @@ type VideoScreenModel struct {
 	VideoScreen          *VideoScreen
 	TransformationMatrix MeshTypes.Matrix
 	MeshModel            []GDTFTypes.MeshModel
+	Geometries           []MeshTypes.Mesh
 }
 
 func (obj VideoScreenModel) Copy() VideoScreenModel {
@@ -107,6 +139,7 @@ func (obj VideoScreenModel) Copy() VideoScreenModel {
 		VideoScreen:          obj.VideoScreen,
 		TransformationMatrix: obj.TransformationMatrix,
 		MeshModel:            CopySlice(obj.MeshModel),
+		Geometries:           CopyMeshSlice(obj.Geometries),
 	}
 }
 
@@ -114,6 +147,7 @@ type ProjectorModel struct {
 	Projector            *Projector
 	TransformationMatrix MeshTypes.Matrix
 	MeshModel            []GDTFTypes.MeshModel
+	Geometries           []MeshTypes.Mesh
 }
 
 func (obj ProjectorModel) Copy() ProjectorModel {
@@ -121,5 +155,6 @@ func (obj ProjectorModel) Copy() ProjectorModel {
 		Projector:            obj.Projector,
 		TransformationMatrix: obj.TransformationMatrix,
 		MeshModel:            CopySlice(obj.MeshModel),
+		Geometries:           CopyMeshSlice(obj.Geometries),
 	}
 }
