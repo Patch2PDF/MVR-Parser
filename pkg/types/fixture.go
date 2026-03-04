@@ -35,6 +35,7 @@ type Fixture struct {
 	CustomIdType     int
 	Mappings         []*Mapping
 	Gobo             *Gobo
+	Model            FixtureModel
 	ChildList
 }
 

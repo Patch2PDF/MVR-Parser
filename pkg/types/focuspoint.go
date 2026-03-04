@@ -11,6 +11,7 @@ type FocusPoint struct {
 	Name       string
 	Matrix     MeshTypes.Matrix
 	Class      NodeReference[Class]
+	Model      FocusPointModel
 	Geometries *Geometries
 }
 

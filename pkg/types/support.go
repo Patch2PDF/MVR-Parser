@@ -29,6 +29,7 @@ type Support struct {
 	UnitNumber       int
 	CustomId         int
 	CustomIdType     int
+	Model            SupportModel
 	ChildList
 }
 

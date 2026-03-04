@@ -26,6 +26,7 @@ type SceneObject struct {
 	UnitNumber       int
 	CustomId         int
 	CustomIdType     int
+	Model            SceneObjectModel
 	ChildList
 }
 

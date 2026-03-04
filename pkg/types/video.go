@@ -28,6 +28,7 @@ type VideoScreen struct {
 	UnitNumber       int
 	CustomId         int
 	CustomIdType     int
+	Model            VideoScreenModel
 	ChildList
 }
 
@@ -76,6 +77,7 @@ type Projector struct {
 	UnitNumber       int
 	CustomId         int
 	CustomIdType     int
+	Model            ProjectorModel
 	ChildList
 }
 

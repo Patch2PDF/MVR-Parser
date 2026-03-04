@@ -1,92 +1,52 @@
 package MVRTypes
 
 import (
-	"sync"
-
 	"github.com/Patch2PDF/GDTF-Mesh-Reader/v2/pkg/MeshTypes"
 	GDTFTypes "github.com/Patch2PDF/GDTF-Parser/pkg/types"
 )
 
-type MeshTasks = []MeshTransformationTask
-
-type MeshTransformationTask struct {
-	Matrix MeshTypes.Matrix
-	Mesh   *MeshTypes.Mesh
-}
-
 type ParentMeshConfig struct {
 	Transformation MeshTypes.Matrix
-	ModelConfig    ModelNodeConfig
 }
 
 type MeshTaskCreator interface {
-	GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig)
+	GenerateMesh(parentMeshConfig ParentMeshConfig)
 }
 
-func getConfigOverrides(modelConfig ModelConfig, parentMeshConfig ParentMeshConfig, uuid string) ModelNodeConfig {
-	configOverrides := parentMeshConfig.ModelConfig
-	if _, found := modelConfig.Individual[uuid]; found {
-		temp := modelConfig.Individual[uuid]
-		if temp.Exclude != nil {
-			configOverrides.Exclude = temp.Exclude
-		}
-		if temp.RenderOnlyAddressedFixture != nil {
-			configOverrides.RenderOnlyAddressedFixture = temp.RenderOnlyAddressedFixture
-		}
-	}
-	return configOverrides
-}
-
-func GenerateMeshes[T MeshTaskCreator](objects []T, meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
+func GenerateMeshes[T MeshTaskCreator](objects []T, parentMeshConfig ParentMeshConfig) {
 	for _, obj := range objects {
-		obj.GenerateMesh(meshTasks, stageModel, modelConfig, parentMeshConfig)
+		obj.GenerateMesh(parentMeshConfig)
 	}
 }
 
-func (a *GeneralSceneDescription) GenerateMeshes(meshTasks *MeshTasks, modelConfig ModelConfig) {
-	if a.StageModel == nil {
-		a.StageModel = &StageModel{}
-	}
+func (a *GeneralSceneDescription) GenerateMeshes() {
 	for _, layer := range a.Scene.Layers {
-		layer.GenerateMesh(meshTasks, a.StageModel, modelConfig, ParentMeshConfig{
+		layer.GenerateMesh(ParentMeshConfig{
 			Transformation: MeshTypes.IdentityMatrix(),
-			ModelConfig:    modelConfig.Global.asNodeConfig(),
 		})
 	}
 }
 
-func (a *ChildList) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	GenerateMeshes(a.SceneObjects, meshTasks, stageModel, modelConfig, parentMeshConfig)
-	GenerateMeshes(a.GroupObjects, meshTasks, stageModel, modelConfig, parentMeshConfig)
-	GenerateMeshes(a.FocusPoints, meshTasks, stageModel, modelConfig, parentMeshConfig)
-	GenerateMeshes(a.Fixtures, meshTasks, stageModel, modelConfig, parentMeshConfig)
-	GenerateMeshes(a.Supports, meshTasks, stageModel, modelConfig, parentMeshConfig)
-	GenerateMeshes(a.Trusses, meshTasks, stageModel, modelConfig, parentMeshConfig)
-	GenerateMeshes(a.VideoScreens, meshTasks, stageModel, modelConfig, parentMeshConfig)
-	GenerateMeshes(a.Projectors, meshTasks, stageModel, modelConfig, parentMeshConfig)
+func (a *ChildList) GenerateMesh(parentMeshConfig ParentMeshConfig) {
+	GenerateMeshes(a.SceneObjects, parentMeshConfig)
+	GenerateMeshes(a.GroupObjects, parentMeshConfig)
+	GenerateMeshes(a.FocusPoints, parentMeshConfig)
+	GenerateMeshes(a.Fixtures, parentMeshConfig)
+	GenerateMeshes(a.Supports, parentMeshConfig)
+	GenerateMeshes(a.Trusses, parentMeshConfig)
+	GenerateMeshes(a.VideoScreens, parentMeshConfig)
+	GenerateMeshes(a.Projectors, parentMeshConfig)
 }
 
-func (obj *GroupObject) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-
-	if config.Exclude != nil && *config.Exclude {
-		return
-	}
-
+func (obj *GroupObject) GenerateMesh(parentMeshConfig ParentMeshConfig) {
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
 
-	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, ParentMeshConfig{
+	obj.ChildList.GenerateMesh(ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    config,
 	})
 }
 
-func (obj *SceneObject) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-
-	if config.Exclude != nil && *config.Exclude {
-		return
-	}
+func (obj *SceneObject) GenerateMesh(parentMeshConfig ParentMeshConfig) {
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
 
@@ -107,25 +67,18 @@ func (obj *SceneObject) GenerateMesh(meshTasks *MeshTasks, stageModel *StageMode
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    config,
 	}
 
-	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, parentConf)
+	model.Geometries = obj.Geometries.GenerateMeshes(parentConf)
 
-	stageModel.SceneObjectModels = append(stageModel.SceneObjectModels, model)
+	obj.Model = model
 
-	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, ParentMeshConfig{
+	obj.ChildList.GenerateMesh(ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    config,
 	})
 }
 
-func (obj *FocusPoint) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-
-	if config.Exclude != nil && *config.Exclude {
-		return
-	}
+func (obj *FocusPoint) GenerateMesh(parentMeshConfig ParentMeshConfig) {
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
 
@@ -134,24 +87,14 @@ func (obj *FocusPoint) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel
 		TransformationMatrix: matrix,
 	}
 
-	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, ParentMeshConfig{
+	model.Geometries = obj.Geometries.GenerateMeshes(ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    config,
 	})
 
-	stageModel.FocusPointModels = append(stageModel.FocusPointModels, model)
+	obj.Model = model
 }
 
-func (obj *Fixture) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-
-	if config.Exclude != nil && *config.Exclude {
-		return
-	}
-	if (config.RenderOnlyAddressedFixture != nil && *config.RenderOnlyAddressedFixture) && (obj.Addresses == nil || len(obj.Addresses.Addresses) == 0) {
-		return
-	}
-
+func (obj *Fixture) GenerateMesh(parentMeshConfig ParentMeshConfig) {
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
 
 	model := FixtureModel{
@@ -169,20 +112,14 @@ func (obj *Fixture) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, m
 		}
 	}
 
-	stageModel.FixtureModels = append(stageModel.FixtureModels, model)
+	obj.Model = model
 
-	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, ParentMeshConfig{
+	obj.ChildList.GenerateMesh(ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    config,
 	})
 }
 
-func (obj *Support) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-
-	if config.Exclude != nil && *config.Exclude {
-		return
-	}
+func (obj *Support) GenerateMesh(parentMeshConfig ParentMeshConfig) {
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
 
@@ -203,22 +140,16 @@ func (obj *Support) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, m
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    config,
 	}
 
-	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, parentConf)
+	model.Geometries = obj.Geometries.GenerateMeshes(parentConf)
 
-	stageModel.SupportModels = append(stageModel.SupportModels, model)
+	obj.Model = model
 
-	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
+	obj.ChildList.GenerateMesh(parentConf)
 }
 
-func (obj *Truss) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-
-	if config.Exclude != nil && *config.Exclude {
-		return
-	}
+func (obj *Truss) GenerateMesh(parentMeshConfig ParentMeshConfig) {
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
 
@@ -239,22 +170,16 @@ func (obj *Truss) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, mod
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    config,
 	}
 
-	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, parentConf)
+	model.Geometries = obj.Geometries.GenerateMeshes(parentConf)
 
-	stageModel.TrussModels = append(stageModel.TrussModels, model)
+	obj.Model = model
 
-	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
+	obj.ChildList.GenerateMesh(parentConf)
 }
 
-func (obj *VideoScreen) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-
-	if config.Exclude != nil && *config.Exclude {
-		return
-	}
+func (obj *VideoScreen) GenerateMesh(parentMeshConfig ParentMeshConfig) {
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
 
@@ -275,22 +200,16 @@ func (obj *VideoScreen) GenerateMesh(meshTasks *MeshTasks, stageModel *StageMode
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    config,
 	}
 
-	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, parentConf)
+	model.Geometries = obj.Geometries.GenerateMeshes(parentConf)
 
-	stageModel.VideoScreenModels = append(stageModel.VideoScreenModels, model)
+	obj.Model = model
 
-	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
+	obj.ChildList.GenerateMesh(parentConf)
 }
 
-func (obj *Projector) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) {
-	config := getConfigOverrides(modelConfig, parentMeshConfig, obj.UUID)
-
-	if config.Exclude != nil && *config.Exclude {
-		return
-	}
+func (obj *Projector) GenerateMesh(parentMeshConfig ParentMeshConfig) {
 
 	matrix := parentMeshConfig.Transformation.Mul(obj.Matrix)
 
@@ -311,17 +230,16 @@ func (obj *Projector) GenerateMesh(meshTasks *MeshTasks, stageModel *StageModel,
 
 	parentConf := ParentMeshConfig{
 		Transformation: matrix,
-		ModelConfig:    config,
 	}
 
-	model.Geometries = obj.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, parentConf)
+	model.Geometries = obj.Geometries.GenerateMeshes(parentConf)
 
-	stageModel.ProjectorModels = append(stageModel.ProjectorModels, model)
+	obj.Model = model
 
-	obj.ChildList.GenerateMesh(meshTasks, stageModel, modelConfig, parentConf)
+	obj.ChildList.GenerateMesh(parentConf)
 }
 
-func (obj *Geometries) GenerateMeshes(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) []MeshTypes.Mesh {
+func (obj *Geometries) GenerateMeshes(parentMeshConfig ParentMeshConfig) []MeshTypes.Mesh {
 	meshes := make([]MeshTypes.Mesh, 0, len(obj.Geometry3D)) // allocate atleast amount of Geometry3D's, count of Symbol Meshes is unknown
 	for _, element := range obj.Geometry3D {
 		matrix := parentMeshConfig.Transformation.Mul(element.Matrix)
@@ -333,58 +251,20 @@ func (obj *Geometries) GenerateMeshes(meshTasks *MeshTasks, stageModel *StageMod
 		matrix := parentMeshConfig.Transformation.Mul(element.Matrix)
 		meshes = append(
 			meshes,
-			element.GenerateMeshes(meshTasks, stageModel, modelConfig, ParentMeshConfig{
+			element.GenerateMeshes(ParentMeshConfig{
 				Transformation: matrix,
-				ModelConfig:    parentMeshConfig.ModelConfig,
 			})...,
 		)
 	}
 	return meshes
 }
 
-func (a *Symbol) GenerateMeshes(meshTasks *MeshTasks, stageModel *StageModel, modelConfig ModelConfig, parentMeshConfig ParentMeshConfig) []MeshTypes.Mesh {
-	config := getConfigOverrides(modelConfig, parentMeshConfig, a.UUID)
-	if config.Exclude != nil && *config.Exclude {
-		return []MeshTypes.Mesh{}
-	}
+func (a *Symbol) GenerateMeshes(parentMeshConfig ParentMeshConfig) []MeshTypes.Mesh {
 	if a.SymDef.Ptr != nil {
 		matrix := parentMeshConfig.Transformation.Mul(a.Matrix)
-		return a.SymDef.Ptr.Geometries.GenerateMeshes(meshTasks, stageModel, modelConfig, ParentMeshConfig{
+		return a.SymDef.Ptr.Geometries.GenerateMeshes(ParentMeshConfig{
 			Transformation: matrix,
-			ModelConfig:    config,
 		})
 	}
 	return []MeshTypes.Mesh{}
-}
-
-func meshTaskWorker(jobs <-chan MeshTransformationTask, wg *sync.WaitGroup) {
-	defer wg.Done()
-	for j := range jobs {
-		j.Mesh.RotateAndTranslate(j.Matrix)
-		// mesh := j.Mesh.Copy()
-		// mesh.RotateAndTranslate(j.Matrix)
-		// *j.Mesh = mesh
-	}
-}
-
-func CompleteMeshTasks(meshTasks *MeshTasks, config MVRParserConfig) {
-
-	var numWorkers = config.StageMeshWorkers
-	jobs := make(chan MeshTransformationTask, len(*meshTasks))
-
-	var wg sync.WaitGroup
-
-	for range numWorkers {
-		wg.Add(1)
-		go meshTaskWorker(jobs, &wg)
-	}
-
-	for _, t := range *meshTasks {
-		jobs <- t
-	}
-	close(jobs)
-
-	wg.Wait()
-
-	// return
 }

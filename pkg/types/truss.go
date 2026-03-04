@@ -29,6 +29,7 @@ type Truss struct {
 	UnitNumber       int
 	CustomId         int
 	CustomIdType     int
+	Model            TrussModel
 	ChildList
 }
 
