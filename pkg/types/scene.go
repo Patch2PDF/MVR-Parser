@@ -109,5 +109,7 @@ func (a *Layer) ResolveReference(refPointers *ReferencePointers) {
 }
 
 func (a *Layer) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
-	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, parentConfig)
+	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
+
+	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
 }

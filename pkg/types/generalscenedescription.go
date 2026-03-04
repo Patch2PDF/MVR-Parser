@@ -19,8 +19,10 @@ func (a *GeneralSceneDescription) ResolveReference(refPointers *ReferencePointer
 
 func (a *GeneralSceneDescription) GetStageModel(config ModelConfig) StageModel {
 	model := StageModel{}
-	for _, layer := range a.Scene.Layers {
-		layer.addNodeModelsToStageModel(&model, config, ModelNodeConfig{}) // TODO: respect layer config
-	}
+
+	local_config := config.Global.asNodeConfig()
+
+	addNodeModelsToStageModel(a.Scene.Layers, &model, config, local_config)
+
 	return model
 }
