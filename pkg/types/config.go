@@ -30,7 +30,6 @@ type MVRParserConfig struct {
 	ReadThumbnail     bool
 	GDTFParserWorkers int
 	StageMeshWorkers  int
-	ModelConfig       ModelConfig
 }
 
 func getConfigOverrides(modelConfig ModelConfig, parentModelConfig ModelNodeConfig, uuid string) ModelNodeConfig {
