@@ -20,17 +20,6 @@ var config = MVRTypes.MVRParserConfig{
 	ReadThumbnail:     true,
 	GDTFParserWorkers: 4,
 	StageMeshWorkers:  4,
-	ModelConfig: MVRTypes.ModelConfig{
-		Global: MVRTypes.GlobalModelConfig{
-			RenderOnlyAddressedFixture: true,
-		},
-		Individual: map[string]MVRTypes.ModelNodeConfig{
-			"FA992217-CB18-D844-9D42-5B791B2BF05E": {
-				Exclude:                    MVRTypes.GetBoolPtr(false),
-				RenderOnlyAddressedFixture: MVRTypes.GetBoolPtr(true),
-			},
-		},
-	},
 }
 
 func main() {
@@ -58,12 +47,29 @@ func main() {
 	// write mesh as STL
 	meshFile, _ := os.Create("Test.stl")
 	mesh := &MeshTypes.Mesh{}
-	for _, fixture := range mvrData.StageModel.FixtureModels {
+
+	model_config := MVRTypes.ModelConfig{
+		Global: MVRTypes.GlobalModelConfig{
+			RenderOnlyAddressedFixture: true,
+		},
+		Individual: map[string]MVRTypes.ModelNodeConfig{
+			"FA992217-CB18-D844-9D42-5B791B2BF05E": { // Group ID for testing
+				Exclude:                    MVRTypes.GetBoolPtr(true),
+				RenderOnlyAddressedFixture: nil,
+			},
+			"FA992217-300B-9B39-62E4-66BF061CC63A": { // Layer ID for testing
+				Exclude: nil,
+			},
+		},
+	}
+
+	stage_model := mvrData.GetStageModel(model_config)
+	for _, fixture := range stage_model.FixtureModels {
 		for _, part := range fixture.MeshModel {
 			mesh.Add(&part.Mesh)
 		}
 	}
-	for _, sceneObject := range mvrData.StageModel.SceneObjectModels {
+	for _, sceneObject := range stage_model.SceneObjectModels {
 		for _, part := range sceneObject.MeshModel {
 			mesh.Add(&part.Mesh)
 		}
