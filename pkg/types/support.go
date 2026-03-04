@@ -58,3 +58,13 @@ func (a *Support) ReadMesh(fileMap map[string]*zip.File) error {
 	}
 	return a.ChildList.ReadMesh(fileMap)
 }
+
+func (a *Support) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
+
+	if config.Exclude == nil || !(*config.Exclude) {
+		stageModel.SupportModels = append(stageModel.SupportModels, a.Model)
+	}
+
+	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
+}

@@ -55,6 +55,16 @@ func (a *VideoScreen) ReadMesh(fileMap map[string]*zip.File) error {
 	return a.ChildList.ReadMesh(fileMap)
 }
 
+func (a *VideoScreen) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
+
+	if config.Exclude == nil || !(*config.Exclude) {
+		stageModel.VideoScreenModels = append(stageModel.VideoScreenModels, a.Model)
+	}
+
+	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
+}
+
 type Projector struct {
 	UUID             string
 	Name             string
@@ -102,6 +112,16 @@ func (a *Projector) ReadMesh(fileMap map[string]*zip.File) error {
 		return err
 	}
 	return a.ChildList.ReadMesh(fileMap)
+}
+
+func (a *Projector) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
+
+	if config.Exclude == nil || !(*config.Exclude) {
+		stageModel.ProjectorModels = append(stageModel.ProjectorModels, a.Model)
+	}
+
+	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
 }
 
 type Source struct {

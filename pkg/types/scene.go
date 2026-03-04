@@ -107,3 +107,7 @@ func (a *Layer) CreateReferencePointer(refPointers *ReferencePointers) {
 func (a *Layer) ResolveReference(refPointers *ReferencePointers) {
 	a.ChildList.ResolveReference(refPointers)
 }
+
+func (a *Layer) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, parentConfig)
+}

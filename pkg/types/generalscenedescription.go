@@ -7,7 +7,6 @@ type GeneralSceneDescription struct {
 	ProviderVersion string
 	UserData        *UserData
 	Scene           *Scene
-	StageModel      *StageModel
 }
 
 func (a *GeneralSceneDescription) CreateReferencePointer(refPointers *ReferencePointers) {
@@ -16,4 +15,12 @@ func (a *GeneralSceneDescription) CreateReferencePointer(refPointers *ReferenceP
 
 func (a *GeneralSceneDescription) ResolveReference(refPointers *ReferencePointers) {
 	a.Scene.ResolveReference(refPointers)
+}
+
+func (a *GeneralSceneDescription) GetStageModel(config ModelConfig) StageModel {
+	model := StageModel{}
+	for _, layer := range a.Scene.Layers {
+		layer.addNodeModelsToStageModel(&model, config, ModelNodeConfig{}) // TODO: respect layer config
+	}
+	return model
 }

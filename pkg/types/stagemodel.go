@@ -28,6 +28,19 @@ func CopyMeshSlice(source []MeshTypes.Mesh) []MeshTypes.Mesh {
 	return slice
 }
 
+type NodeModel interface {
+	addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig)
+}
+
+func addNodeModelsToStageModel[T NodeModel](source []T, stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+	if source == nil {
+		return
+	}
+	for i := range source {
+		source[i].addNodeModelsToStageModel(stageModel, modelConfig, parentConfig)
+	}
+}
+
 type StageModel struct {
 	SceneObjectModels []SceneObjectModel
 	FocusPointModels  []FocusPointModel
