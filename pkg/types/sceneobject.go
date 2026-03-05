@@ -26,6 +26,7 @@ type SceneObject struct {
 	UnitNumber       int
 	CustomId         int
 	CustomIdType     int
+	Model            SceneObjectModel
 	ChildList
 }
 
@@ -50,6 +51,16 @@ func (a *SceneObject) ReadMesh(fileMap map[string]*zip.File) error {
 		return err
 	}
 	return a.ChildList.ReadMesh(fileMap)
+}
+
+func (a *SceneObject) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
+
+	if config.Exclude == nil || !(*config.Exclude) {
+		stageModel.SceneObjectModels = append(stageModel.SceneObjectModels, a.Model)
+	}
+
+	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
 }
 
 type Alignment struct {

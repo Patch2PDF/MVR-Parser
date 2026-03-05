@@ -28,3 +28,9 @@ func (a *GroupObject) ResolveReference(refPointers *ReferencePointers) {
 func (a *GroupObject) ReadMesh(fileMap map[string]*zip.File) error {
 	return a.ChildList.ReadMesh(fileMap)
 }
+
+func (a *GroupObject) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
+
+	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
+}

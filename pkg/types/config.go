@@ -30,5 +30,17 @@ type MVRParserConfig struct {
 	ReadThumbnail     bool
 	GDTFParserWorkers int
 	StageMeshWorkers  int
-	ModelConfig       ModelConfig
+}
+
+func getConfigOverrides(modelConfig ModelConfig, parentModelConfig ModelNodeConfig, uuid string) ModelNodeConfig {
+	if _, found := modelConfig.Individual[uuid]; found {
+		temp := modelConfig.Individual[uuid]
+		if temp.Exclude != nil {
+			parentModelConfig.Exclude = temp.Exclude
+		}
+		if temp.RenderOnlyAddressedFixture != nil {
+			parentModelConfig.RenderOnlyAddressedFixture = temp.RenderOnlyAddressedFixture
+		}
+	}
+	return parentModelConfig
 }
