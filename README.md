@@ -1,4 +1,4 @@
-# GDTF-Parser
+# MVR-Parser
 
 This Go module allows reading and parsing the content of a `.mvr` file.
 
