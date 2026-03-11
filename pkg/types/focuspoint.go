@@ -34,6 +34,6 @@ func (a *FocusPoint) addNodeModelsToStageModel(stageModel *StageModel, modelConf
 	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
 
 	if config.Exclude == nil || !(*config.Exclude) {
-		stageModel.FocusPointModels = append(stageModel.FocusPointModels, a.Model)
+		stageModel.FocusPointModels = append(stageModel.FocusPointModels, a.Model.Copy())
 	}
 }

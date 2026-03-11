@@ -63,7 +63,7 @@ func (a *Truss) addNodeModelsToStageModel(stageModel *StageModel, modelConfig Mo
 	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
 
 	if config.Exclude == nil || !(*config.Exclude) {
-		stageModel.TrussModels = append(stageModel.TrussModels, a.Model)
+		stageModel.TrussModels = append(stageModel.TrussModels, a.Model.Copy())
 	}
 
 	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)

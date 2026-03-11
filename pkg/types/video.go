@@ -59,7 +59,7 @@ func (a *VideoScreen) addNodeModelsToStageModel(stageModel *StageModel, modelCon
 	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
 
 	if config.Exclude == nil || !(*config.Exclude) {
-		stageModel.VideoScreenModels = append(stageModel.VideoScreenModels, a.Model)
+		stageModel.VideoScreenModels = append(stageModel.VideoScreenModels, a.Model.Copy())
 	}
 
 	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
@@ -118,7 +118,7 @@ func (a *Projector) addNodeModelsToStageModel(stageModel *StageModel, modelConfi
 	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
 
 	if config.Exclude == nil || !(*config.Exclude) {
-		stageModel.ProjectorModels = append(stageModel.ProjectorModels, a.Model)
+		stageModel.ProjectorModels = append(stageModel.ProjectorModels, a.Model.Copy())
 	}
 
 	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)

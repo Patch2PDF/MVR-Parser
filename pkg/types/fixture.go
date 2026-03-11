@@ -70,7 +70,7 @@ func (a *Fixture) addNodeModelsToStageModel(stageModel *StageModel, modelConfig 
 		!(*config.Exclude)) &&
 		!(config.RenderOnlyAddressedFixture != nil && *config.RenderOnlyAddressedFixture &&
 			(a.Addresses == nil || len(a.Addresses.Addresses) == 0)) { // remove unpatched fixtures if desired
-		stageModel.FixtureModels = append(stageModel.FixtureModels, a.Model)
+		stageModel.FixtureModels = append(stageModel.FixtureModels, a.Model.Copy())
 	}
 
 	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
