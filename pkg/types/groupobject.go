@@ -29,8 +29,16 @@ func (a *GroupObject) ReadMesh(fileMap map[string]*zip.File) error {
 	return a.ChildList.ReadMesh(fileMap)
 }
 
-func (a *GroupObject) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+func (a *GroupObject) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig, parentParameters parentNodeParameters) {
 	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
 
-	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
+	classID := a.Class.String
+	if classID == nil {
+		classID = parentParameters.classID
+	}
+	childParameters := parentNodeParameters{
+		classID: classID,
+	}
+
+	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config, childParameters)
 }

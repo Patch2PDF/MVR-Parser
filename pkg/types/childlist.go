@@ -85,13 +85,13 @@ func ReadMeshes[T MeshReader](src []T, fileMap map[string]*zip.File) error {
 	return nil
 }
 
-func (c *ChildList) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
-	addNodeModelsToStageModel(c.SceneObjects, stageModel, modelConfig, parentConfig)
-	addNodeModelsToStageModel(c.GroupObjects, stageModel, modelConfig, parentConfig)
-	addNodeModelsToStageModel(c.FocusPoints, stageModel, modelConfig, parentConfig)
-	addNodeModelsToStageModel(c.Fixtures, stageModel, modelConfig, parentConfig)
-	addNodeModelsToStageModel(c.Supports, stageModel, modelConfig, parentConfig)
-	addNodeModelsToStageModel(c.Trusses, stageModel, modelConfig, parentConfig)
-	addNodeModelsToStageModel(c.VideoScreens, stageModel, modelConfig, parentConfig)
-	addNodeModelsToStageModel(c.Projectors, stageModel, modelConfig, parentConfig)
+func (c *ChildList) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig, parentParameters parentNodeParameters) {
+	addNodeModelsToStageModel(c.SceneObjects, stageModel, modelConfig, parentConfig, parentParameters)
+	addNodeModelsToStageModel(c.GroupObjects, stageModel, modelConfig, parentConfig, parentParameters)
+	addNodeModelsToStageModel(c.FocusPoints, stageModel, modelConfig, parentConfig, parentParameters)
+	addNodeModelsToStageModel(c.Fixtures, stageModel, modelConfig, parentConfig, parentParameters)
+	addNodeModelsToStageModel(c.Supports, stageModel, modelConfig, parentConfig, parentParameters)
+	addNodeModelsToStageModel(c.Trusses, stageModel, modelConfig, parentConfig, parentParameters)
+	addNodeModelsToStageModel(c.VideoScreens, stageModel, modelConfig, parentConfig, parentParameters)
+	addNodeModelsToStageModel(c.Projectors, stageModel, modelConfig, parentConfig, parentParameters)
 }

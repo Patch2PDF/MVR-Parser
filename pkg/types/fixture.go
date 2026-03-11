@@ -63,17 +63,24 @@ func (a *Fixture) ReadMesh(fileMap map[string]*zip.File) error {
 	return a.ChildList.ReadMesh(fileMap)
 }
 
-func (a *Fixture) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+func (a *Fixture) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig, parentParameters parentNodeParameters) {
 	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
+
+	validClass, classID := checkShouldIncludeClassInModel(modelConfig.ClassConfig, a.Class.String, parentParameters.classID)
 
 	if (config.Exclude == nil ||
 		!(*config.Exclude)) &&
+		validClass &&
 		!(config.RenderOnlyAddressedFixture != nil && *config.RenderOnlyAddressedFixture &&
 			(a.Addresses == nil || len(a.Addresses.Addresses) == 0)) { // remove unpatched fixtures if desired
 		stageModel.FixtureModels = append(stageModel.FixtureModels, a.Model.Copy())
 	}
 
-	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
+	childParameters := parentNodeParameters{
+		classID: classID,
+	}
+
+	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config, childParameters)
 }
 
 type Gobo struct {

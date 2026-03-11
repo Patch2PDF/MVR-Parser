@@ -1,8 +1,9 @@
 package MVRTypes
 
 type ModelConfig struct {
-	Global     GlobalModelConfig
-	Individual map[string]ModelNodeConfig // configure by Node (fixture, ...) UUID (also applies to children)
+	Global      GlobalModelConfig
+	Individual  map[string]ModelNodeConfig // configure by Node (fixture, ...) UUID (also applies to children)
+	ClassConfig ModelClassConfig
 }
 
 type GlobalModelConfig struct {
@@ -25,6 +26,32 @@ type ModelNodeConfig struct {
 	Exclude                    *bool
 }
 
+// Note: include has precedence over exclude
+type ModelClassConfig struct {
+	Excludes map[string]struct{} // specify if you want to exclude these Class UUIDs from the model
+	Includes map[string]struct{} // specify if only want to include these Class UUIDs in the model
+}
+
+func checkShouldIncludeClassInModel(classConfig ModelClassConfig, classID *string, parentClassID *string) (result bool, newParentClassID *string) {
+	if classID == nil {
+		if parentClassID == nil {
+			return false, nil
+		} else {
+			classID = parentClassID
+		}
+	}
+	if len(classConfig.Includes) > 0 {
+		if _, ok := classConfig.Includes[*classID]; ok {
+			return true, classID
+		}
+	} else {
+		if _, ok := classConfig.Excludes[*classID]; !ok {
+			return true, classID
+		}
+	}
+	return false, classID
+}
+
 type MVRParserConfig struct {
 	MeshHandling      int
 	ReadThumbnail     bool
@@ -43,4 +70,8 @@ func getConfigOverrides(modelConfig ModelConfig, parentModelConfig ModelNodeConf
 		}
 	}
 	return parentModelConfig
+}
+
+type parentNodeParameters struct {
+	classID *string
 }

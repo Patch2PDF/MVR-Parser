@@ -30,10 +30,12 @@ func (a *FocusPoint) ReadMesh(fileMap map[string]*zip.File) error {
 	return a.Geometries.ReadMesh(fileMap)
 }
 
-func (a *FocusPoint) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+func (a *FocusPoint) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig, parentParameters parentNodeParameters) {
 	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
 
-	if config.Exclude == nil || !(*config.Exclude) {
+	validClass, _ := checkShouldIncludeClassInModel(modelConfig.ClassConfig, a.Class.String, parentParameters.classID)
+
+	if (config.Exclude == nil || !(*config.Exclude)) && validClass {
 		stageModel.FocusPointModels = append(stageModel.FocusPointModels, a.Model.Copy())
 	}
 }

@@ -108,8 +108,12 @@ func (a *Layer) ResolveReference(refPointers *ReferencePointers) {
 	a.ChildList.ResolveReference(refPointers)
 }
 
-func (a *Layer) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+func (a *Layer) addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig, parentParameters parentNodeParameters) {
 	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
 
-	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
+	childParameters := parentNodeParameters{
+		classID: nil,
+	}
+
+	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config, childParameters)
 }
