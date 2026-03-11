@@ -57,7 +57,7 @@ func (a *SceneObject) addNodeModelsToStageModel(stageModel *StageModel, modelCon
 	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
 
 	if config.Exclude == nil || !(*config.Exclude) {
-		stageModel.SceneObjectModels = append(stageModel.SceneObjectModels, a.Model)
+		stageModel.SceneObjectModels = append(stageModel.SceneObjectModels, a.Model.Copy())
 	}
 
 	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)

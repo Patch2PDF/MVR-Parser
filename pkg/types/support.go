@@ -63,7 +63,7 @@ func (a *Support) addNodeModelsToStageModel(stageModel *StageModel, modelConfig 
 	config := getConfigOverrides(modelConfig, parentConfig, a.UUID)
 
 	if config.Exclude == nil || !(*config.Exclude) {
-		stageModel.SupportModels = append(stageModel.SupportModels, a.Model)
+		stageModel.SupportModels = append(stageModel.SupportModels, a.Model.Copy())
 	}
 
 	a.ChildList.addNodeModelsToStageModel(stageModel, modelConfig, config)
