@@ -35,7 +35,7 @@ type ModelClassConfig struct {
 func checkShouldIncludeClassInModel(classConfig ModelClassConfig, classID *string, parentClassID *string) (result bool, newParentClassID *string) {
 	if classID == nil {
 		if parentClassID == nil {
-			return false, nil
+			return len(classConfig.Includes) <= 0, nil
 		} else {
 			classID = parentClassID
 		}
