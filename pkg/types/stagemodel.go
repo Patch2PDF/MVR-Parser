@@ -29,15 +29,15 @@ func CopyMeshSlice(source []MeshTypes.Mesh) []MeshTypes.Mesh {
 }
 
 type NodeModel interface {
-	addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig)
+	addNodeModelsToStageModel(stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig, parentParameters parentNodeParameters)
 }
 
-func addNodeModelsToStageModel[T NodeModel](source []T, stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig) {
+func addNodeModelsToStageModel[T NodeModel](source []T, stageModel *StageModel, modelConfig ModelConfig, parentConfig ModelNodeConfig, parentParameters parentNodeParameters) {
 	if source == nil {
 		return
 	}
 	for i := range source {
-		source[i].addNodeModelsToStageModel(stageModel, modelConfig, parentConfig)
+		source[i].addNodeModelsToStageModel(stageModel, modelConfig, parentConfig, parentParameters)
 	}
 }
 

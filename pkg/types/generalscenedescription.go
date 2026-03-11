@@ -22,7 +22,7 @@ func (a *GeneralSceneDescription) GetStageModel(config ModelConfig) StageModel {
 
 	local_config := config.Global.asNodeConfig()
 
-	addNodeModelsToStageModel(a.Scene.Layers, &model, config, local_config)
+	addNodeModelsToStageModel(a.Scene.Layers, &model, config, local_config, parentNodeParameters{})
 
 	return model
 }
